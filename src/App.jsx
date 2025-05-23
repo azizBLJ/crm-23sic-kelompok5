@@ -15,7 +15,7 @@ function App() {
     <Routes>
       <Route  element={<MainLayout />}>
         <Route path="/" element={<Dashboard />}/>
-        <Route path="/penjualan" element={<SalesManagement />}/>
+        {/* <Route path="/penjualan" element={<SalesManagement />}/> */}
         <Route path="/produk" element={<ProductManagement />}/>
       </Route>
     </Routes>
