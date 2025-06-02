@@ -1,3 +1,5 @@
+import { FaQuestionCircle } from "react-icons/fa"; 
+import { MdOutlineCardMembership } from "react-icons/md"; 
 import {
   LayoutDashboard,
   Users,         // untuk pelanggan
@@ -17,6 +19,8 @@ const menuItems = [
   { name: 'Produk', icon: <Box />, path: '/produk' },
   { name: 'Penjualan', icon: <ShoppingCart />, path: '/penjualan' },
   { name: 'Laporan', icon: <BarChart2 />, path: '/laporan' },
+  { name: 'Sistem Membership', icon: <MdOutlineCardMembership /> , path: '/SistemMembership' },
+  { name: 'FAQ', icon: <FaQuestionCircle /> , path: '/FAQ' },
 ]
 
 const accountItems = [
