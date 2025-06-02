@@ -8,6 +8,9 @@ import Dashboard from './pages/Dashboard'
 import SalesManagement from './pages/SalesManagement'
 import ProductManagement from './pages/Produk'
 import Pelanggan from './pages/Pelanggan' 
+import SistemMembership from './pages/SistemMembership'
+import { FaQ } from 'react-icons/fa6'
+import FAQ from './pages/FAQ'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -21,6 +24,8 @@ function App() {
         {/* <Route path="/penjualan" element={<SalesManagement />}/> */}
         <Route path="/produk" element={<ProductManagement />}/>
         <Route path="Pelanggan" element={<Pelanggan />} />
+         <Route path="SistemMembership" element={<SistemMembership />} />
+         <Route path="FAQ" element={<FAQ/>} />
       </Route>
     </Routes>
     </>

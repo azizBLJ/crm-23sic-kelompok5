@@ -1,3 +1,6 @@
+import { FaQuestion } from "react-icons/fa"; 
+import { FaQuestionCircle } from "react-icons/fa"; 
+import { MdOutlineCardMembership } from "react-icons/md"; 
 import { AiOutlineShoppingCart } from "react-icons/ai"; 
 import {
   LayoutDashboard,
@@ -18,6 +21,8 @@ const menuItems = [
   { name: 'Produk', icon: <Box />, path: '/produk' },
   { name: 'Penjualan', icon: <AiOutlineShoppingCart />, path: '/penjualan' },
   { name: 'Pelanggan', icon: <BarChart2 />, path: '/Pelanggan' },
+  { name: 'Sistem Membership', icon: <MdOutlineCardMembership /> , path: '/SistemMembership' },
+  { name: 'FAQ', icon: <FaQuestion /> , path: '/FAQ' },
 ]
 
 const accountItems = [
