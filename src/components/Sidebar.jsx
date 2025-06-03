@@ -1,3 +1,4 @@
+import { MdRememberMe } from "react-icons/md"; 
 import { FaQuestionCircle } from "react-icons/fa"; 
 import { MdOutlineCardMembership } from "react-icons/md"; 
 import {
@@ -21,6 +22,7 @@ const menuItems = [
   { name: 'Laporan', icon: <BarChart2 />, path: '/laporan' },
   { name: 'Sistem Membership', icon: <MdOutlineCardMembership /> , path: '/SistemMembership' },
   { name: 'FAQ', icon: <FaQuestionCircle /> , path: '/FAQ' },
+  { name: 'Membership', icon: <MdRememberMe /> , path: '/Membership' },
 ]
 
 const accountItems = [

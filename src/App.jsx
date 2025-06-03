@@ -8,6 +8,8 @@ import Dashboard from './pages/Dashboard'
 import ProductManagement from './pages/Produk'
 import SistemMembership from './pages/SistemMembership'
 import FAQ from './pages/FAQ'
+import Membership from './pages/Membership'
+import MembershipForm from './pages/MembershipForm'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -19,6 +21,10 @@ function App() {
         <Route path="/produk" element={<ProductManagement />}/>
         <Route path="SistemMembership" element={<SistemMembership />} />
          <Route path="FAQ" element={<FAQ />} />
+         <Route path="/membership" element={<Membership />}>
+          <Route path="add" element={<MembershipForm />} />
+          </Route>
+
       </Route>
     </Routes>
     </>
