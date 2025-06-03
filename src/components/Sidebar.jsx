@@ -1,4 +1,5 @@
 import { IoIosBed } from "react-icons/io"; 
+import { AiOutlineShoppingCart } from "react-icons/ai"; 
 import {
   LayoutDashboard,
   Users,         // untuk pelanggan
@@ -9,6 +10,7 @@ import {
   User,
   LogIn,
   UserPlus,
+  CarTaxiFront,
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -17,6 +19,9 @@ const menuItems = [
   { name: 'Laporan', icon: <BarChart2 />, path: '/Pelanggan' },
   { name: 'PesanKamar', icon: <IoIosBed />, path: '/PesanKamar' },
 
+  { name: 'Produk', icon: <Box />, path: '/produk' },
+  { name: 'Penjualan', icon: <AiOutlineShoppingCart />, path: '/penjualan' },
+  { name: 'Pelanggan', icon: <BarChart2 />, path: '/Pelanggan' },
 ]
 
 const accountItems = [
