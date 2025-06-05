@@ -12,6 +12,9 @@ import SistemMembership from './pages/SistemMembership'
 import FAQ from './pages/FAQ'
 import RiwayatTransaksi from './pages/RiwayatTransaksi'
 import PetaHotelFasilitas from './pages/PetaHotelFasilitas'
+import Membership from './pages/Membership'
+import MembershipForm from './pages/MembershipForm'
+
 
 
 function App() {
@@ -27,7 +30,11 @@ function App() {
         <Route path="/riwayatTransaksi" element={<RiwayatTransaksi/>} />
         <Route path="/PetaHotelFasilitas" element={<PetaHotelFasilitas/>} />
         <Route path="/PesanKamar" element={<PesanKamar />} />
-        <Route path="/PesanKamar/Konfirmasi" element={<KonfirmasiPesanan />} />
+        <Route path="/PesanKamar/Konfirmasi" element={<KonfirmasiPesanan />} />    
+        <Route path="/membership" element={<Membership />}>
+        <Route path="add" element={<MembershipForm />} />
+        </Route>
+
       </Route>
     </Routes>
   );

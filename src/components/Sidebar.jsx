@@ -1,15 +1,17 @@
 import { FaQuestion } from "react-icons/fa"; 
-import { FaQuestionCircle } from "react-icons/fa"; 
 import { MdOutlineCardMembership } from "react-icons/md"; 
 import { IoIosBed } from "react-icons/io"; 
 import { AiOutlineShoppingCart } from "react-icons/ai"; 
+import { MdRememberMe } from "react-icons/md"; 
+import { FaQuestionCircle } from "react-icons/fa"; 
+
 import {
   LayoutDashboard,
-  Users,         // untuk pelanggan
-  ShoppingCart,  // untuk penjualan
-  Box,           // untuk produk
-  BarChart2,     // untuk laporan
-  Settings,      // untuk pengaturan akun
+  Users,         
+  ShoppingCart,  
+  Box,           
+  BarChart2,     
+  Settings,      
   User,
   LogIn,
   UserPlus,
@@ -21,17 +23,19 @@ import { FaHistory } from 'react-icons/fa';
 
 const menuItems = [
   { name: 'Dashboard', icon: <LayoutDashboard />, path: '/' },
-  { name: 'Laporan', icon: <BarChart2 />, path: '/Pelanggan' },
   { name: 'PesanKamar', icon: <IoIosBed />, path: '/PesanKamar' },
-
   { name: 'Produk', icon: <Box />, path: '/produk' },
   { name: 'Penjualan', icon: <AiOutlineShoppingCart />, path: '/penjualan' },
   { name: 'Pelanggan', icon: <BarChart2 />, path: '/Pelanggan' },
   { name: 'Sistem Membership', icon: <MdOutlineCardMembership />, path: '/SistemMembership' },
   { name: 'Riwayat Transaksi', icon: <FaHistory />, path: '/riwayatTransaksi' },
   { name: 'Peta Hotel & Fasilitas', icon: <MdMap />, path: '/petaHotelFasilitas' },
-  { name: 'FAQ', icon: <FaQuestion />, path: '/FAQ' },
+  { name: 'FAQ', icon: <FaQuestion />, path: '/FAQ' }, 
+  { name: 'Membership', icon: <MdRememberMe /> , path: '/Membership' },
+
 ];
+
+ 
 
 const accountItems = [
   { name: 'Pengaturan Akun', icon: <Settings />, path: '/akun' },
