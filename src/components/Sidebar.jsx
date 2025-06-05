@@ -1,6 +1,7 @@
 import { FaQuestion } from "react-icons/fa"; 
 import { FaQuestionCircle } from "react-icons/fa"; 
 import { MdOutlineCardMembership } from "react-icons/md"; 
+import { IoIosBed } from "react-icons/io"; 
 import { AiOutlineShoppingCart } from "react-icons/ai"; 
 import {
   LayoutDashboard,
@@ -20,6 +21,9 @@ import { FaHistory } from 'react-icons/fa';
 
 const menuItems = [
   { name: 'Dashboard', icon: <LayoutDashboard />, path: '/' },
+  { name: 'Laporan', icon: <BarChart2 />, path: '/Pelanggan' },
+  { name: 'PesanKamar', icon: <IoIosBed />, path: '/PesanKamar' },
+
   { name: 'Produk', icon: <Box />, path: '/produk' },
   { name: 'Penjualan', icon: <AiOutlineShoppingCart />, path: '/penjualan' },
   { name: 'Pelanggan', icon: <BarChart2 />, path: '/Pelanggan' },
