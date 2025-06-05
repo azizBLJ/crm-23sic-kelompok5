@@ -15,15 +15,19 @@ import {
   CarTaxiFront,
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
+import { MdMap } from 'react-icons/md';
+import { FaHistory } from 'react-icons/fa';
 
 const menuItems = [
   { name: 'Dashboard', icon: <LayoutDashboard />, path: '/' },
   { name: 'Produk', icon: <Box />, path: '/produk' },
   { name: 'Penjualan', icon: <AiOutlineShoppingCart />, path: '/penjualan' },
   { name: 'Pelanggan', icon: <BarChart2 />, path: '/Pelanggan' },
-  { name: 'Sistem Membership', icon: <MdOutlineCardMembership /> , path: '/SistemMembership' },
-  { name: 'FAQ', icon: <FaQuestion /> , path: '/FAQ' },
-]
+  { name: 'Sistem Membership', icon: <MdOutlineCardMembership />, path: '/SistemMembership' },
+  { name: 'Riwayat Transaksi', icon: <FaHistory />, path: '/riwayatTransaksi' },
+  { name: 'Peta Hotel & Fasilitas', icon: <MdMap />, path: '/petaHotelFasilitas' },
+  { name: 'FAQ', icon: <FaQuestion />, path: '/FAQ' },
+];
 
 const accountItems = [
   { name: 'Pengaturan Akun', icon: <Settings />, path: '/akun' },
