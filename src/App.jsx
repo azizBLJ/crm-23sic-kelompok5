@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Routes, Route } from "react-router-dom";
 import MainLayout from "./components/MainLayout";
 import Dashboard from "./pages/Dashboard";
@@ -14,7 +13,8 @@ import Membership from './pages/Membership'
 import MembershipForm from './pages/MembershipForm'
 import AdminBookingPage from './pages/AdminBookingPage'
 import BookingDetailPage from './pages/BookingDetailPage';
-
+import AvailableRoomsAdmin from './pages/AvailableRoomsAdmin';
+import RoomDetail from './pages/RoomDetail';
 
 
 function App() {
@@ -32,12 +32,15 @@ function App() {
           <Route path="FAQ" element={<FAQ/>} />
           <Route path="/riwayatTransaksi" element={<RiwayatTransaksi/>} />
           <Route path="/PetaHotelFasilitas" element={<PetaHotelFasilitas/>} />
+
+          <Route path="/AvailableRoomsAdmin" element={<AvailableRoomsAdmin />} />
+          <Route path="/AvailableRoomsAdmin/:id" element={<RoomDetail />} />
+
           <Route path="/membership" element={<Membership />}>
           <Route path="add" element={<MembershipForm />} />
-          </Route>
         </Route>
-      </Routes>
-    
+      </Route>
+    </Routes>
   );
 }
 
