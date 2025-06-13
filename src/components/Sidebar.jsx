@@ -1,3 +1,4 @@
+import { MdEventAvailable } from "react-icons/md"; 
 import { FaQuestion } from "react-icons/fa"; 
 import { MdOutlineCardMembership } from "react-icons/md"; 
 import { IoIosBed } from "react-icons/io"; 
@@ -32,6 +33,7 @@ const menuItems = [
   { name: 'Peta Hotel & Fasilitas', icon: <MdMap />, path: '/petaHotelFasilitas' },
   { name: 'FAQ', icon: <FaQuestion />, path: '/FAQ' }, 
   { name: 'Membership', icon: <MdRememberMe /> , path: '/Membership' },
+  { name: 'Kamar Available', icon: <MdEventAvailable /> , path: '/AvailableRoomsAdmin' },
 
 ];
 
