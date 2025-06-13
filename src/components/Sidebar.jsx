@@ -23,7 +23,7 @@ import { FaHistory } from 'react-icons/fa';
 
 const menuItems = [
   { name: 'Dashboard', icon: <LayoutDashboard />, path: '/' },
-  { name: 'PesanKamar', icon: <IoIosBed />, path: '/PesanKamar' },
+  { name: 'Booking', icon: <IoIosBed />, path: '/AdminBookingPage' },
   { name: 'Produk', icon: <Box />, path: '/produk' },
   { name: 'Penjualan', icon: <AiOutlineShoppingCart />, path: '/penjualan' },
   { name: 'Pelanggan', icon: <BarChart2 />, path: '/Pelanggan' },
