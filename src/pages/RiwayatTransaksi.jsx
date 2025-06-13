@@ -1,38 +1,179 @@
 import React, { useState } from "react";
+import { Bar, Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+);
 
 const dataTransaksi = [
-  { id: 1, nama: "Budi Santoso", kamar: "101", tanggal: "2025-06-01", total: 350000 },
-  { id: 2, nama: "Siti Aminah", kamar: "202", tanggal: "2025-06-03", total: 480000 },
-  { id: 3, nama: "Andi Wijaya", kamar: "103", tanggal: "2025-06-05", total: 400000 },
+  {
+    id: 1,
+    nama: "Budi Santoso",
+    kamar: "101",
+    tanggal: "2025-06-01",
+    total: 350000,
+  },
+  {
+    id: 2,
+    nama: "Siti Aminah",
+    kamar: "202",
+    tanggal: "2025-06-03",
+    total: 480000,
+  },
+  {
+    id: 3,
+    nama: "Andi Wijaya",
+    kamar: "103",
+    tanggal: "2025-06-05",
+    total: 400000,
+  },
 ];
 
 export default function RiwayatTransaksi() {
   const [query, setQuery] = useState("");
+  const [filterTanggal, setFilterTanggal] = useState("");
+  const [filterKamar, setFilterKamar] = useState("");
 
-  const filtered = dataTransaksi.filter((item) =>
-    item.nama.toLowerCase().includes(query.toLowerCase())
+  const filtered = dataTransaksi.filter(
+    (item) =>
+      item.nama.toLowerCase().includes(query.toLowerCase()) &&
+      (!filterTanggal || item.tanggal === filterTanggal) &&
+      (!filterKamar || item.kamar === filterKamar)
   );
 
+  const totalTransaksi = filtered.length;
+  const totalPendapatan = filtered.reduce((sum, item) => sum + item.total, 0);
+
+  // Bar chart data dummy
+  const barData = {
+    labels: ["2025-06-01", "2025-06-03", "2025-06-05"],
+    datasets: [
+      {
+        label: "Pendapatan Harian",
+        data: [350000, 480000, 400000],
+        backgroundColor: "#FFAD84",
+      },
+    ],
+  };
+
+  // Pie chart kamar
+  const kamarCount = dataTransaksi.reduce((acc, trx) => {
+    acc[trx.kamar] = (acc[trx.kamar] || 0) + 1;
+    return acc;
+  }, {});
+  const pieData = {
+    labels: Object.keys(kamarCount),
+    datasets: [
+      {
+        data: Object.values(kamarCount),
+        backgroundColor: ["#FFAD84", "#FFE382", "#FFC47E", "#FFF78A"],
+      },
+    ],
+  };
+
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Riwayat Transaksi & Aktivitas</h1>
+    <div className="p-8 font-sans bg-gray-100 min-h-screen">
+      <h1 className="text-2xl font-bold mb-6 text-gray-700">
+        Riwayat Transaksi & Aktivitas
+      </h1>
 
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Cari nama pelanggan..."
-        className="mb-4 w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-      />
+      {/* Card Info */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white p-4 rounded shadow border-l-4 border-orange-400">
+          <h3 className="text-sm text-gray-500">Jumlah Transaksi</h3>
+          <p className="text-xl font-semibold">{totalTransaksi}</p>
+        </div>
+        <div className="bg-white p-4 rounded shadow border-l-4 border-yellow-400">
+          <h3 className="text-sm text-gray-500">Total Pendapatan</h3>
+          <p className="text-xl font-semibold">
+            Rp {totalPendapatan.toLocaleString()}
+          </p>
+        </div>
+        <div className="bg-white p-4 rounded shadow border-l-4 border-green-400">
+          <h3 className="text-sm text-gray-500">Rata-rata Pendapatan Harian</h3>
+          <p className="text-xl font-semibold">
+            Rp{" "}
+            {totalPendapatan && totalTransaksi
+              ? Math.round(totalPendapatan / totalTransaksi).toLocaleString()
+              : 0}
+          </p>
+        </div>
+      </div>
 
+      {/* Chart */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="bg-white p-4 rounded shadow h-80">
+          <h2 className="text-lg font-semibold mb-2">Pendapatan Harian</h2>
+          <div className="h-[240px]">
+            <Bar data={barData} options={{ maintainAspectRatio: false }} />
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded shadow h-80">
+          <h2 className="text-lg font-semibold mb-2">Distribusi Kamar</h2>
+          <div className="h-[240px]">
+            <Pie data={pieData} options={{ maintainAspectRatio: false }} />
+          </div>
+        </div>
+      </div>
+
+      {/* Filter & Search */}
+      <div className="bg-white p-4 rounded shadow mb-4">
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Cari nama pelanggan..."
+          className="mb-2 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
+        />
+
+        <div className="flex flex-col sm:flex-row gap-4">
+          <input
+            type="date"
+            value={filterTanggal}
+            onChange={(e) => setFilterTanggal(e.target.value)}
+            className="w-full px-3 py-2 border rounded"
+          />
+          <input
+            type="text"
+            placeholder="Filter nomor kamar..."
+            value={filterKamar}
+            onChange={(e) => setFilterKamar(e.target.value)}
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
+      </div>
+
+      {/* Table */}
       <div className="overflow-x-auto bg-white rounded shadow">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Nama</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">No Kamar</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Tanggal</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Total (Rp)</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                Nama
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                No Kamar
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                Tanggal
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                Total (Rp)
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">

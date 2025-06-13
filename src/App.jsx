@@ -19,24 +19,25 @@ import MembershipForm from './pages/MembershipForm'
 
 function App() {
   return (
-    <Routes>
-      <Route  element={<MainLayout />}>
-        <Route path="/" element={<Dashboard />}/>
-        <Route path="/penjualan" element={<SalesManagement />}/>
-        <Route path="/produk" element={<ProductManagement />}/>
-        <Route path="Pelanggan" element={<Pelanggan />} />
-        <Route path="SistemMembership" element={<SistemMembership />} />
-        <Route path="FAQ" element={<FAQ/>} />
-        <Route path="/riwayatTransaksi" element={<RiwayatTransaksi/>} />
-        <Route path="/PetaHotelFasilitas" element={<PetaHotelFasilitas/>} />
-        <Route path="/PesanKamar" element={<PesanKamar />} />
-        <Route path="/PesanKamar/Konfirmasi" element={<KonfirmasiPesanan />} />    
-        <Route path="/membership" element={<Membership />}>
-        <Route path="add" element={<MembershipForm />} />
+    
+      <Routes>
+        <Route  element={<MainLayout />}>
+          <Route path="/" element={<Dashboard />}/>
+          <Route path="/penjualan" element={<SalesManagement />}/>
+          <Route path="/produk" element={<ProductManagement />}/>
+          <Route path="Pelanggan" element={<Pelanggan />} />
+          <Route path="SistemMembership" element={<SistemMembership />} />
+          <Route path="FAQ" element={<FAQ/>} />
+          <Route path="/riwayatTransaksi" element={<RiwayatTransaksi/>} />
+          <Route path="/PetaHotelFasilitas" element={<PetaHotelFasilitas/>} />
+          <Route path="/PesanKamar" element={<PesanKamar />} />
+          <Route path="/PesanKamar/Konfirmasi" element={<KonfirmasiPesanan />} />    
+          <Route path="/membership" element={<Membership />}>
+          <Route path="add" element={<MembershipForm />} />
+          </Route>
         </Route>
-
-      </Route>
-    </Routes>
+      </Routes>
+    
   );
 }
 
