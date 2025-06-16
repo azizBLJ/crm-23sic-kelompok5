@@ -1,46 +1,46 @@
-import { Routes, Route } from "react-router-dom";
-import MainLayout from "./components/MainLayout";
-import Dashboard from "./pages/Dashboard";
-import Pelanggan from "./pages/Pelanggan";
+
+import { Routes, Route} from "react-router-dom";
 import './App.css'
-import SalesManagement from './pages/SalesManagement'
-import ProductManagement from './pages/Produk'
-import SistemMembership from './pages/SistemMembership'
-import FAQ from './pages/FAQ'
-import RiwayatTransaksi from './pages/RiwayatTransaksi'
-import PetaHotelFasilitas from './pages/PetaHotelFasilitas'
-import Membership from './pages/Membership'
-import MembershipForm from './pages/MembershipForm'
-import AdminBookingPage from './pages/AdminBookingPage'
-import BookingDetailPage from './pages/BookingDetailPage';
-import AvailableRoomsAdmin from './pages/AvailableRoomsAdmin';
-import RoomDetail from './pages/RoomDetail';
+
+//Admin
+import FAQ from './pages/Admin/FAQ/FAQ';
+import Dashboard from "./pages/Admin/Dashboard";
+import MainLayout from "./components/Admin/MainLayout";
+import RoomDetail from './pages/Admin/Rooms/RoomDetail';
+import Pelanggan from "./pages/Admin/Pelanggan/Pelanggan";
+import Membership from './pages/Admin/Membership/Membership';
+import MembershipForm from './pages/Admin/Membership/MembershipForm';
+import AdminBookingPage from './pages/Admin/Booking/AdminBookingPage';
+import RiwayatTransaksi from './pages/Admin/Transaksi/RiwayatTransaksi';
+import BookingDetailPage from './pages/Admin/Booking/BookingDetailPage';
+import SistemMembership from './pages/Admin/Membership/SistemMembership';
+import AvailableRoomsAdmin from './pages/Admin/Rooms/AvailableRoomsAdmin';
+import PetaHotelFasilitas from './pages/Admin/Fasilitas/PetaHotelFasilitas';
+//----------------------------------------------------------------------------------------------------------------------------
+
 
 
 function App() {
   return (
-    
+   
       <Routes>
         <Route  element={<MainLayout />}>
           <Route path="/" element={<Dashboard />}/>
-          <Route path="/penjualan" element={<SalesManagement />}/>
-          <Route path="/produk" element={<ProductManagement />}/>
           <Route path="Pelanggan" element={<Pelanggan />} />
-            <Route path="/AdminBookingPage" element={<AdminBookingPage />} />
+          <Route path="/AdminBookingPage" element={<AdminBookingPage />} />
           <Route path="/booking-detail/:id" element={<BookingDetailPage />} />
           <Route path="SistemMembership" element={<SistemMembership />} />
           <Route path="FAQ" element={<FAQ/>} />
           <Route path="/riwayatTransaksi" element={<RiwayatTransaksi/>} />
           <Route path="/PetaHotelFasilitas" element={<PetaHotelFasilitas/>} />
-
           <Route path="/AvailableRoomsAdmin" element={<AvailableRoomsAdmin />} />
           <Route path="/AvailableRoomsAdmin/:id" element={<RoomDetail />} />
-
           <Route path="/membership" element={<Membership />}>
           <Route path="add" element={<MembershipForm />} />
+          </Route>
         </Route>
-      </Route>
-    </Routes>
+      </Routes>
+      
   );
 }
 

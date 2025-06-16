@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import DELUX from "../assets/DELUX.jpg"; // gambar lokal
+import DELUX from "../../../assets/DELUX.jpg"; 
 
 const availableRooms = [
   {
@@ -9,7 +9,7 @@ const availableRooms = [
     fasilitas: ["AC", "Wi-Fi", "TV", "Kamar Mandi Dalam"],
     deskripsi: "Kamar luas dengan fasilitas premium dan pemandangan kota.",
     status: "Tersedia",
-    image: DELUX, // gambar lokal
+    image: <DELUX />, // gambar lokal
   },
   {
     id: 2,
