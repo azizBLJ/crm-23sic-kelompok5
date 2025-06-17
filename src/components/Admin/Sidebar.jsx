@@ -32,9 +32,9 @@ const menuItems = [
 ];
 
 const accountItems = [
-  { name: 'Pengaturan Akun', icon: <Settings />, path: '/akun' },
-  { name: 'Sign Up', icon: <UserPlus />, path: '/signup' },
-  { name: 'Sign Out', icon: <LogIn />, path: '/Login' },
+  { name: 'Pengaturan Akun (belum bisa)', icon: <Settings />, path: '/akun' },
+  { name: 'Sign Up (belum bisa juga)', icon: <UserPlus />, path: '/signup' },
+  { name: 'Sign Out', icon: <LogIn />, path: '/' },
 ];
 
 const Sidebar = () => {
