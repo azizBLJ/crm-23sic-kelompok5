@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { FaSortUp, FaSortDown } from "react-icons/fa";
 
 ChartJS.register(
   ArcElement,
@@ -20,45 +21,43 @@ ChartJS.register(
 );
 
 const dataTransaksi = [
-  {
-    id: 1,
-    nama: "Budi Santoso",
-    kamar: "101",
-    tanggal: "2025-06-01",
-    total: 350000,
-  },
-  {
-    id: 2,
-    nama: "Siti Aminah",
-    kamar: "202",
-    tanggal: "2025-06-03",
-    total: 480000,
-  },
-  {
-    id: 3,
-    nama: "Andi Wijaya",
-    kamar: "103",
-    tanggal: "2025-06-05",
-    total: 400000,
-  },
+  { id: 1, nama: "Budi Santoso", kamar: "101", tanggal: "2025-06-01", total: 350000 },
+  { id: 2, nama: "Siti Aminah", kamar: "202", tanggal: "2025-06-03", total: 480000 },
+  { id: 3, nama: "Andi Wijaya", kamar: "103", tanggal: "2025-06-05", total: 400000 },
 ];
 
 export default function RiwayatTransaksi() {
   const [query, setQuery] = useState("");
   const [filterTanggal, setFilterTanggal] = useState("");
   const [filterKamar, setFilterKamar] = useState("");
+  const [sortBy, setSortBy] = useState(null);
+  const [sortDir, setSortDir] = useState("asc");
 
-  const filtered = dataTransaksi.filter(
-    (item) =>
-      item.nama.toLowerCase().includes(query.toLowerCase()) &&
-      (!filterTanggal || item.tanggal === filterTanggal) &&
-      (!filterKamar || item.kamar === filterKamar)
-  );
+  const filtered = dataTransaksi
+    .filter(
+      (item) =>
+        item.nama.toLowerCase().includes(query.toLowerCase()) &&
+        (!filterTanggal || item.tanggal === filterTanggal) &&
+        (!filterKamar || item.kamar === filterKamar)
+    )
+    .sort((a, b) => {
+      if (!sortBy) return 0;
+      const valA = a[sortBy];
+      const valB = b[sortBy];
+      if (valA < valB) return sortDir === "asc" ? -1 : 1;
+      if (valA > valB) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+
+  const handleSort = (key) => {
+    const dir = sortBy === key && sortDir === "asc" ? "desc" : "asc";
+    setSortBy(key);
+    setSortDir(dir);
+  };
 
   const totalTransaksi = filtered.length;
   const totalPendapatan = filtered.reduce((sum, item) => sum + item.total, 0);
 
-  // Bar chart data dummy
   const barData = {
     labels: ["2025-06-01", "2025-06-03", "2025-06-05"],
     datasets: [
@@ -70,11 +69,11 @@ export default function RiwayatTransaksi() {
     ],
   };
 
-  // Pie chart kamar
   const kamarCount = dataTransaksi.reduce((acc, trx) => {
     acc[trx.kamar] = (acc[trx.kamar] || 0) + 1;
     return acc;
   }, {});
+
   const pieData = {
     labels: Object.keys(kamarCount),
     datasets: [
@@ -87,11 +86,9 @@ export default function RiwayatTransaksi() {
 
   return (
     <div className="p-8 font-sans bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-700">
-        Riwayat Transaksi & Aktivitas
-      </h1>
+      <h1 className="text-2xl font-bold mb-6 text-gray-700">Riwayat Transaksi & Aktivitas</h1>
 
-      {/* Card Info */}
+      {/* Info Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-white p-4 rounded shadow border-l-4 border-orange-400">
           <h3 className="text-sm text-gray-500">Jumlah Transaksi</h3>
@@ -99,17 +96,12 @@ export default function RiwayatTransaksi() {
         </div>
         <div className="bg-white p-4 rounded shadow border-l-4 border-yellow-400">
           <h3 className="text-sm text-gray-500">Total Pendapatan</h3>
-          <p className="text-xl font-semibold">
-            Rp {totalPendapatan.toLocaleString()}
-          </p>
+          <p className="text-xl font-semibold">Rp {totalPendapatan.toLocaleString()}</p>
         </div>
         <div className="bg-white p-4 rounded shadow border-l-4 border-green-400">
           <h3 className="text-sm text-gray-500">Rata-rata Pendapatan Harian</h3>
           <p className="text-xl font-semibold">
-            Rp{" "}
-            {totalPendapatan && totalTransaksi
-              ? Math.round(totalPendapatan / totalTransaksi).toLocaleString()
-              : 0}
+            Rp {totalTransaksi ? Math.round(totalPendapatan / totalTransaksi).toLocaleString() : 0}
           </p>
         </div>
       </div>
@@ -130,7 +122,7 @@ export default function RiwayatTransaksi() {
         </div>
       </div>
 
-      {/* Filter & Search */}
+      {/* Filter */}
       <div className="bg-white p-4 rounded shadow mb-4">
         <input
           type="text"
@@ -139,7 +131,6 @@ export default function RiwayatTransaksi() {
           placeholder="Cari nama pelanggan..."
           className="mb-2 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
         />
-
         <div className="flex flex-col sm:flex-row gap-4">
           <input
             type="date"
@@ -157,23 +148,21 @@ export default function RiwayatTransaksi() {
         </div>
       </div>
 
-      {/* Table */}
+      {/* Tabel */}
       <div className="overflow-x-auto bg-white rounded shadow">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                Nama
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                No Kamar
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                Tanggal
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                Total (Rp)
-              </th>
+              {["nama", "kamar", "tanggal", "total"].map((col) => (
+                <th
+                  key={col}
+                  className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase cursor-pointer"
+                  onClick={() => handleSort(col)}
+                >
+                  {col.charAt(0).toUpperCase() + col.slice(1)}{" "}
+                  {sortBy === col && (sortDir === "asc" ? <FaSortUp className="inline" /> : <FaSortDown className="inline" />)}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
