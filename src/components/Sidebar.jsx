@@ -19,7 +19,6 @@ const menuItems = [
   { name: 'Dashboard', icon: <LayoutDashboard />, path: '/' },
   { name: 'Produk', icon: <Box />, path: '/produk' },
   { name: 'Penjualan', icon: <ShoppingCart />, path: '/penjualan' },
-  { name: 'Laporan', icon: <BarChart2 />, path: '/laporan' },
   { name: 'Sistem Membership', icon: <MdOutlineCardMembership /> , path: '/SistemMembership' },
   { name: 'FAQ', icon: <FaQuestionCircle /> , path: '/FAQ' },
   { name: 'Membership', icon: <MdRememberMe /> , path: '/Membership' },
