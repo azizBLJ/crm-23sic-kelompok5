@@ -97,7 +97,7 @@ const AvailableRoomsAdmin = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {availableRooms.map((room) => (
             <Link
-              to={`/AvailableRoomsAdmin/${room.id}`}
+              to={`/admin/AvailableRoomsAdmin/${room.id}`}
               key={room.id}
               className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 border border-gray-100"
             >

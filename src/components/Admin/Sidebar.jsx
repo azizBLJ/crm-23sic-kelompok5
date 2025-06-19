@@ -21,21 +21,29 @@ import { IoIosBed } from "react-icons/io";
 import { Link, useLocation } from 'react-router-dom';
 
 const menuItems = [
-  { name: 'Dashboard', icon: <LayoutDashboard />, path: '/DashboardAdmin' },
-  { name: 'Booking', icon: <IoIosBed />, path: '/AdminBookingPage' },
-  { name: 'Sistem Membership', icon: <MdOutlineCardMembership />, path: '/SistemMembership' },
-  { name: 'Riwayat Transaksi', icon: <FaHistory />, path: '/riwayatTransaksi' },
-  { name: 'Peta Hotel & Fasilitas', icon: <MdMap />, path: '/petaHotelFasilitas' },
-  { name: 'FAQ', icon: <FaQuestion />, path: '/FAQ' },
-  { name: 'Membership', icon: <MdRememberMe />, path: '/Membership' },
-  { name: 'Kamar Available', icon: <MdEventAvailable />, path: '/AvailableRoomsAdmin' },
+  { name: 'Dashboard', icon: <LayoutDashboard />, path: '/admin' },
+  { name: 'Booking', icon: <IoIosBed />, path: '/admin/AdminBookingPage' },
+  { name: 'Sistem Membership', icon: <MdOutlineCardMembership />, path: '/admin/SistemMembership' },
+  { name: 'Riwayat Transaksi', icon: <FaHistory />, path: '/admin/riwayatTransaksi' },
+  { name: 'Peta Hotel & Fasilitas', icon: <MdMap />, path: '/admin/PetaHotelFasilitas' },
+  { name: 'FAQ', icon: <FaQuestion />, path: '/admin/FAQ' },
+  { name: 'Membership', icon: <MdRememberMe />, path: '/admin/membership' },
+  { name: 'Kamar Available', icon: <MdEventAvailable />, path: '/admin/AvailableRoomsAdmin' },
 ];
 
+
 const accountItems = [
-  { name: 'Pengaturan Akun (belum bisa)', icon: <Settings />, path: '/akun' },
-  { name: 'Sign Up (belum bisa juga)', icon: <UserPlus />, path: '/signup' },
-  { name: 'Sign Out', icon: <LogIn />, path: '/' },
+  { name: 'Pengaturan Akun (belum bisa)', icon: <Settings />, path: '/admin/akun' },
+  { name: 'Sign Up (belum bisa juga)', icon: <UserPlus />, path: '/register' },
 ];
+
+
+const handleLogout = () => {
+  localStorage.removeItem("user");
+  window.location.href = "/";
+};
+
+
 
 const Sidebar = () => {
   const location = useLocation();
@@ -84,6 +92,16 @@ const Sidebar = () => {
             {item.name}
           </Link>
         ))}
+       
+
+        {/* Tombol Sign Out */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-yellow-300 transition text-gray-700 w-full"
+        >
+          <span className="w-5 h-5"><LogIn /></span>
+          Sign Out
+        </button>
       </nav>
     </aside>
   );

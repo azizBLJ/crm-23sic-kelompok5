@@ -36,7 +36,7 @@ const AdminBookingPage = () => {
   const navigate = useNavigate();
 
   const handleViewDetails = (booking) => {
-    navigate(`/booking-detail/${booking.id}`, { state: booking });
+    navigate(`/admin/booking-detail/${booking.id}`, { state: booking });
   };
 
   return (
