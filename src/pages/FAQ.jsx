@@ -1,26 +1,28 @@
 import React, { useState } from "react";
+import { ChevronDown, ChevronUp, Edit3, Trash2 } from "lucide-react";
 
 const FAQ = () => {
   const [faqList, setFaqList] = useState([
     {
       id: 1,
-      question: "Bagaimana cara mendaftar akun?",
-      answer: "Klik tombol daftar dan isi data Anda.",
+      question: "Bagaimana cara melakukan reservasi di Hotel Mutiara?",
+      answer: "Anda dapat melakukan reservasi melalui website resmi kami atau menghubungi layanan resepsionis 24 jam.",
       createdAt: new Date("2025-05-10").toISOString(),
     },
     {
       id: 2,
-      question: "Apa itu membership?",
-      answer: "",
+      question: "Apakah tersedia layanan antar-jemput bandara?",
+      answer: "Ya, kami menyediakan layanan antar-jemput bandara dengan biaya tambahan. Silakan hubungi kami sebelum kedatangan.",
       createdAt: new Date("2025-06-01").toISOString(),
     },
     {
       id: 3,
-      question: "Bagaimana mendapatkan poin?",
-      answer: "Gunakan layanan dan kumpulkan poin.",
+      question: "Fasilitas apa saja yang tersedia untuk tamu Hotel Mutiara?",
+      answer: "Kami menyediakan kolam renang, pusat kebugaran, spa, restoran, ruang meeting, dan Wi-Fi gratis di seluruh area hotel.",
       createdAt: new Date("2025-06-10").toISOString(),
     },
   ]);
+
 
   const [form, setForm] = useState({ question: "", answer: "" });
   const [editId, setEditId] = useState(null);
@@ -37,16 +39,16 @@ const FAQ = () => {
       setFaqList((prev) =>
         prev.map((f) =>
           f.id === editId
-            ? { ...f, question: form.question.trim(), answer: form.answer.trim() }
+            ? { ...f, question: form.question, answer: form.answer }
             : f
         )
       );
       setEditId(null);
     } else {
       const newFaq = {
-        id: faqList.length ? Math.max(...faqList.map((f) => f.id)) + 1 : 1,
-        question: form.question.trim(),
-        answer: form.answer.trim(),
+        id: Date.now(),
+        question: form.question,
+        answer: form.answer,
         createdAt: new Date().toISOString(),
       };
       setFaqList([...faqList, newFaq]);
@@ -62,37 +64,61 @@ const FAQ = () => {
 
   const handleDelete = (id) => {
     setFaqList(faqList.filter((f) => f.id !== id));
+    setOpenId(null);
     if (editId === id) {
       setForm({ question: "", answer: "" });
       setEditId(null);
     }
-    setOpenId(null);
   };
 
   const filteredFaq = faqList.filter((faq) => {
-    const matchFilter =
+    const byFilter =
       filter === "semua" ||
-      (filter === "belum" && (faq.answer || "").trim() === "") ||
-      (filter === "sudah" && (faq.answer || "").trim() !== "");
-    const matchSearch = faq.question
+      (filter === "belum" && !faq.answer.trim()) ||
+      (filter === "sudah" && faq.answer.trim());
+    const bySearch = faq.question
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-    return matchFilter && matchSearch;
+    return byFilter && bySearch;
   });
 
   return (
-    <div className="min-h-screen py-4 px-4 sm:px-6 lg:px-8 bg-[#FFFDF5]">
-      <div className="max-w-5xl mx-auto">
-        <h2 className="text-2xl font-bold text-center text-black mb-10 tracking-wide">
-          Pusat Bantuan FAQ
-        </h2>
+    <div className="min-h-screen px-4 py-10 bg-white font-sans">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-center text-3xl font-bold text-black mb-10">
+          📚 Frequently Asked Questions
+        </h1>
 
-        {/* Filter & Search Section */}
-        <div className="flex flex-wrap gap-4 items-center mb-8">
+        {/* Form */}
+        <div className="mb-10 space-y-4">
+          <input
+            name="question"
+            value={form.question}
+            onChange={handleChange}
+            placeholder="Pertanyaan..."
+            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+          />
+          <textarea
+            name="answer"
+            value={form.answer}
+            onChange={handleChange}
+            placeholder="Jawaban..."
+            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+          />
+          <button
+            onClick={handleSubmit}
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-md hover:opacity-90 transition"
+          >
+            {editId ? "Update" : "Tambah"}
+          </button>
+        </div>
+
+        {/* Filter & Search */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#FFC47E]"
+            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
           >
             <option value="semua">Semua</option>
             <option value="belum">Belum Dijawab</option>
@@ -100,72 +126,54 @@ const FAQ = () => {
           </select>
           <input
             type="text"
-            placeholder="Cari pertanyaan..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md shadow-sm flex-1 bg-white focus:outline-none focus:ring-2 focus:ring-[#FFC47E]"
+            placeholder="🔍 Cari pertanyaan..."
+            className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
           />
-        </div>
-
-        {/* Form Tambah / Edit */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-          <input
-            name="question"
-            placeholder="Pertanyaan"
-            value={form.question}
-            onChange={handleChange}
-            className="p-3 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#FFC47E]"
-          />
-          <input
-            name="answer"
-            placeholder="Jawaban"
-            value={form.answer}
-            onChange={handleChange}
-            className="p-3 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#FFC47E]"
-          />
-          <button
-            onClick={handleSubmit}
-            className="text-white font-semibold rounded-md p-3 hover:opacity-90 transition shadow-md"
-            style={{ backgroundColor: "#FFC47E" }}
-          >
-            {editId ? "Update" : "Tambah"}
-          </button>
         </div>
 
         {/* FAQ List */}
         {filteredFaq.map((faq) => (
           <div
             key={faq.id}
-            className="mb-5 border border-gray-200 rounded-lg p-5 shadow-sm bg-white hover:shadow-md transition duration-200 ease-in-out"
+            className="mb-5 p-5 rounded-lg bg-white border border-gray-200 shadow hover:shadow-md transition-all"
           >
             <div
+              className="flex justify-between items-center cursor-pointer"
               onClick={() => setOpenId(openId === faq.id ? null : faq.id)}
-              className="cursor-pointer font-semibold text-gray-900 text-lg hover:text-[#F6B21A] transition"
             >
-              {faq.question}
+              <h4 className="text-lg font-regular text-gray-800 hover:text-orange-500 transition">
+                {faq.question}
+              </h4>
+              {openId === faq.id ? (
+                <ChevronUp className="text-orange-500" />
+              ) : (
+                <ChevronDown className="text-gray-400" />
+              )}
             </div>
             {openId === faq.id && (
-              <div className="mt-3 text-gray-700 text-sm border-t border-gray-100 pt-3">
+              <div className="mt-3 pt-3 text-sm text-gray-700 border-t border-gray-100">
                 <p className="mb-2">
                   <strong>Jawaban:</strong>{" "}
                   {faq.answer ? faq.answer : <i>(Belum dijawab)</i>}
                 </p>
-                <p className="text-gray-500 text-xs">
+                <p className="text-xs text-gray-500">
                   Ditambahkan pada:{" "}
                   {new Date(faq.createdAt).toLocaleString("id-ID")}
                 </p>
-                <div className="mt-3 flex gap-3">
+                <div className="mt-3 flex gap-2">
                   <button
                     onClick={() => handleEdit(faq)}
-                    className="text-white px-4 py-1 rounded bg-[#FFC47E] hover:bg-[#E6B06F] transition duration-300 shadow-sm"
+                    className="bg-yellow-400 text-white px-4 py-1 rounded-md flex items-center gap-1 text-sm shadow hover:bg-yellow-500"
                   >
-                    Edit
+                    <Edit3 size={16} /> Edit
                   </button>
                   <button
                     onClick={() => handleDelete(faq.id)}
-                    className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 transition duration-300 shadow-sm"
+                    className="bg-red-500 text-white px-4 py-1 rounded-md flex items-center gap-1 text-sm shadow hover:bg-red-600"
                   >
-                    Hapus
+                    <Trash2 size={16} /> Hapus
                   </button>
                 </div>
               </div>
@@ -174,7 +182,7 @@ const FAQ = () => {
         ))}
 
         {filteredFaq.length === 0 && (
-          <p className="text-center text-gray-500 mt-10">
+          <p className="text-center text-gray-400 mt-10">
             Tidak ada pertanyaan yang cocok.
           </p>
         )}
