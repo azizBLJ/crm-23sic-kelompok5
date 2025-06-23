@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
-const demoBookings = [
+const initialBookings = [
   {
     id: 1,
     nama: "Andi Saputra",
@@ -29,71 +29,142 @@ const demoBookings = [
     tipeKamar: "Standar",
     jumlahTamu: 1,
   },
+ {
+    id: 4,
+    nama: "Habib",
+    email: "Habib.santoso@example.com",
+    checkin: "2024-08-07",
+    checkout: "2024-08-10",
+    tipeKamar: "Deluxe",
+    jumlahTamu: 1,
+  },
 ];
 
-const AdminBookingPage = () => {
-  const [bookings] = useState(demoBookings);
-  const navigate = useNavigate();
+const AdminManageBookingPage = () => {
+  const [bookings, setBookings] = useState(initialBookings);
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({});
 
-  const handleViewDetails = (booking) => {
-    navigate(`/admin/booking-detail/${booking.id}`, { state: booking });
+  const kamarCount = bookings.reduce((acc, curr) => {
+    acc[curr.tipeKamar] = (acc[curr.tipeKamar] || 0) + 1;
+    return acc;
+  }, {});
+
+  const chartData = Object.keys(kamarCount).map((tipe) => ({
+    name: tipe,
+    jumlah: kamarCount[tipe],
+  }));
+
+  const handleDelete = (id) => {
+    setBookings(bookings.filter((b) => b.id !== id));
+  };
+
+  const handleEdit = (booking) => {
+    setEditingId(booking.id);
+    setFormData(booking);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSave = () => {
+    setBookings(
+      bookings.map((b) => (b.id === editingId ? { ...formData, id: editingId } : b))
+    );
+    setEditingId(null);
+    setFormData({});
   };
 
   return (
-    <>
-      <style>
-        {`
-          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+    <div className="min-h-screen bg-white p-8 font-inter">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-4xl font-bold text-orange-600 text-center mb-6">
+          Manajemen Pemesanan & Statistik
+        </h1>
 
-          .animated-bg {
-            background: linear-gradient(270deg, #ffe382, #ffc47e, #ffad84, #ffe382);
-            background-size: 800% 800%;
-            animation: gradientShift 15s ease infinite;
-          }
-
-          @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
-        `}
-      </style>
-
-      <div className="min-h-screen animated-bg p-10 font-inter">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-5xl font-extrabold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-[#ffad84] via-[#ffc47e] to-[#ffe382]">
-            Daftar Pemesanan Kamar
-          </h1>
-
-          {bookings.length === 0 ? (
-            <p className="text-center text-gray-700 text-lg">Tidak ada pemesanan saat ini.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {bookings.map((booking) => (
-                <div
-                  key={booking.id}
-                  className="bg-white/90 backdrop-blur-lg border border-orange-200 rounded-3xl p-6 shadow-xl hover:shadow-2xl transform hover:scale-105 transition duration-300"
-                >
-                  <h2 className="text-2xl font-semibold text-gray-800">{booking.nama}</h2>
-                  <p className="text-gray-600 text-sm mb-1">📧 {booking.email}</p>
-                  <p className="text-gray-600 text-sm">🛬 Check-in: {booking.checkin}</p>
-                  <p className="text-gray-600 text-sm">🛫 Check-out: {booking.checkout}</p>
-                  <p className="text-gray-600 text-sm">🛏️ Tipe Kamar: {booking.tipeKamar}</p>
-                  <p className="text-gray-600 text-sm">👥 Jumlah Tamu: {booking.jumlahTamu}</p>
-                  <button
-                    onClick={() => handleViewDetails(booking)}
-                    className="mt-4 w-full py-2 bg-gradient-to-r from-[#ffad84] via-[#ffc47e] to-[#ffe382] text-white font-semibold rounded-xl hover:brightness-110 transition"
-                  >
-                    🔍 Lihat Detail
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+        {/* TABEL PEMESANAN */}
+        <div className="bg-white p-6 rounded-xl shadow-xl mb-8">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Daftar Pemesanan</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-left border border-orange-200">
+              <thead>
+                <tr className="bg-orange-200 text-gray-800">
+                  <th className="px-4 py-2">Nama</th>
+                  <th className="px-4 py-2">Email</th>
+                  <th className="px-4 py-2">Check-in</th>
+                  <th className="px-4 py-2">Check-out</th>
+                  <th className="px-4 py-2">Tipe</th>
+                  <th className="px-4 py-2">Tamu</th>
+                  <th className="px-4 py-2">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bookings.map((b) => (
+                  <tr key={b.id} className="border-b hover:bg-orange-50">
+                    {editingId === b.id ? (
+                      <>
+                        <td className="px-4 py-2">
+                          <input name="nama" value={formData.nama} onChange={handleChange} className="border rounded p-1 w-full" />
+                        </td>
+                        <td className="px-4 py-2">
+                          <input name="email" value={formData.email} onChange={handleChange} className="border rounded p-1 w-full" />
+                        </td>
+                        <td className="px-4 py-2">
+                          <input name="checkin" value={formData.checkin} onChange={handleChange} type="date" className="border rounded p-1 w-full" />
+                        </td>
+                        <td className="px-4 py-2">
+                          <input name="checkout" value={formData.checkout} onChange={handleChange} type="date" className="border rounded p-1 w-full" />
+                        </td>
+                        <td className="px-4 py-2">
+                          <input name="tipeKamar" value={formData.tipeKamar} onChange={handleChange} className="border rounded p-1 w-full" />
+                        </td>
+                        <td className="px-4 py-2">
+                          <input name="jumlahTamu" value={formData.jumlahTamu} onChange={handleChange} type="number" className="border rounded p-1 w-full" />
+                        </td>
+                        <td className="px-4 py-2">
+                          <button onClick={handleSave} className="text-green-600 font-semibold mr-2">Simpan</button>
+                        </td>
+                      </>
+                    ) : (
+                      <>
+                        <td className="px-4 py-2">{b.nama}</td>
+                        <td className="px-4 py-2">{b.email}</td>
+                        <td className="px-4 py-2">{b.checkin}</td>
+                        <td className="px-4 py-2">{b.checkout}</td>
+                        <td className="px-4 py-2">{b.tipeKamar}</td>
+                        <td className="px-4 py-2">{b.jumlahTamu}</td>
+                        <td className="px-4 py-2">
+                          <button onClick={() => handleEdit(b)} className="text-blue-600 font-semibold mr-2">Edit</button>
+                          <button onClick={() => handleDelete(b.id)} className="text-red-600 font-semibold">Hapus</button>
+                        </td>
+                      </>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
+
+        {/* GRAFIK DITARUH DI BAWAH */}
+        <div className="bg-white p-6 rounded-xl shadow-xl">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Statistik Tipe Kamar</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
+              <Bar dataKey="jumlah" fill="#ffad84" radius={[10, 10, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
       </div>
-    </>
+    </div>
   );
 };
 
-export default AdminBookingPage;
+export default AdminManageBookingPage;

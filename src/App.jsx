@@ -5,14 +5,12 @@ import './App.css'
 import FAQAdmin from './pages/Admin/FAQ/FAQ';
 import DashboardAdmin from "./pages/Admin/Dashboard";
 import MainLayoutAdmin from "./components/Admin/MainLayout";
-import RoomDetailAdmin from './pages/Admin/Rooms/RoomDetail';
 import PelangganAdmin from "./pages/Admin/Pelanggan/Pelanggan";
 import MembershipAdmin from './pages/Admin/Membership/Membership';
 import AvailableRoomsAdmin from './pages/Admin/Rooms/AvailableRoomsAdmin';
 import MembershipFormAdmin from './pages/Admin/Membership/MembershipForm';
 import AdminBookingPageAdmin from './pages/Admin/Booking/AdminBookingPage';
 import RiwayatTransaksiAdmin from './pages/Admin/Transaksi/RiwayatTransaksi';
-import BookingDetailPageAdmin from './pages/Admin/Booking/BookingDetailPage';
 import SistemMembershipAdmin from './pages/Admin/Membership/SistemMembership';
 import PetaHotelFasilitasAdmin from './pages/Admin/Fasilitas/PetaHotelFasilitas';
 
@@ -48,13 +46,11 @@ function App() {
         <Route index element={<DashboardAdmin />} />
         <Route path="Pelanggan" element={<PelangganAdmin />} />
         <Route path="AdminBookingPage" element={<AdminBookingPageAdmin />} />
-        <Route path="booking-detail/:id" element={<BookingDetailPageAdmin />} />
         <Route path="SistemMembership" element={<SistemMembershipAdmin />} />
         <Route path="FAQ" element={<FAQAdmin />} />
         <Route path="riwayatTransaksi" element={<RiwayatTransaksiAdmin />} />
         <Route path="PetaHotelFasilitas" element={<PetaHotelFasilitasAdmin />} />
         <Route path="AvailableRoomsAdmin" element={<AvailableRoomsAdmin />} />
-        <Route path="AvailableRoomsAdmin/:id" element={<RoomDetailAdmin />} />
         <Route path="membership" element={<MembershipAdmin />} />
         <Route path="membership/add" element={<MembershipFormAdmin />} />
       </Route>

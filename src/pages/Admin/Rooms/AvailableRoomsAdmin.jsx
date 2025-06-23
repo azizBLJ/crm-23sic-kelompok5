@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
-import DELUX from "../../../assets/DELUX.jpg"; 
+import { useState } from "react";
 
-const availableRooms = [
+const initialRooms = [
   {
     id: 1,
     tipe: "Deluxe",
@@ -9,7 +8,11 @@ const availableRooms = [
     fasilitas: ["AC", "Wi-Fi", "TV", "Kamar Mandi Dalam"],
     deskripsi: "Kamar luas dengan fasilitas premium dan pemandangan kota.",
     status: "Tersedia",
-    image: <DELUX />, // gambar lokal
+    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=400&h=250&fit=crop",
+    nomorKamar: "101",
+    tamu: null,
+    checkinDate: null,
+    checkoutDate: null,
   },
   {
     id: 2,
@@ -17,155 +20,302 @@ const availableRooms = [
     harga: 1200000,
     fasilitas: ["AC", "Wi-Fi", "Bathtub", "Mini Bar", "Breakfast"],
     deskripsi: "Suite mewah cocok untuk keluarga dan pasangan bulan madu.",
-    status: "Tersedia",
-    image: "https://i.pinimg.com/736x/a3/6d/f6/a36df64ce1f8da6e4749efe8f7e4ffc3.jpg"
+    status: "Terisi",
+    image: "https://i.pinimg.com/736x/a3/6d/f6/a36df64ce1f8da6e4749efe8f7e4ffc3.jpg",
+    nomorKamar: "201",
+    tamu: "Budi Santoso",
+    checkinDate: "2025-06-15",
+    checkoutDate: "2025-06-20",
   },
   {
     id: 3,
     tipe: "Standar",
-    harga: 500000,
-    fasilitas: ["Kipas Angin", "Wi-Fi", "TV"],
-    deskripsi: "Kamar ekonomis dengan fasilitas dasar dan nyaman.",
+    harga: 600000,
+    fasilitas: ["AC", "TV", "Shower", "Air Panas"],
+    deskripsi: "Kamar nyaman dengan desain modern dan harga terjangkau.",
     status: "Tersedia",
-    image: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=400&h=250&fit=crop"
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=250&fit=crop",
+    nomorKamar: "102",
+    tamu: null,
+    checkinDate: null,
+    checkoutDate: null,
   },
+  {
+    id: 4,
+    tipe: "Deluxe",
+    harga: 950000,
+    fasilitas: ["AC", "Wi-Fi", "TV", "Mini Bar", "Working Desk"],
+    deskripsi: "Cocok untuk pebisnis dengan fasilitas kerja dan kenyamanan tinggi.",
+    status: "Maintenance",
+    image: "https://images.unsplash.com/photo-1582719478183-d6c94469da28?w=400&h=250&fit=crop",
+    nomorKamar: "301",
+    tamu: null,
+    checkinDate: null,
+    checkoutDate: null,
+  },
+  {
+    id: 5,
+    tipe: "Suite",
+    harga: 1300000,
+    fasilitas: ["AC", "Wi-Fi", "2 Tempat Tidur", "TV", "Dapur Kecil"],
+    deskripsi: "Dirancang khusus untuk keluarga dengan kapasitas hingga 4 orang.",
+    status: "Terisi",
+    image: "https://images.unsplash.com/photo-1578894388660-e77c1454e225?w=400&h=250&fit=crop",
+    nomorKamar: "401",
+    tamu: "Keluarga Rahmat",
+    checkinDate: "2025-06-16",
+    checkoutDate: "2025-06-18",
+  },  
+
 ];
 
-const AvailableRoomsAdmin = () => {
+const RoomAvailabilityAdmin = () => {
+  const [rooms, setRooms] = useState(initialRooms);
+  const [filterStatus, setFilterStatus] = useState("Semua");
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({});
+  const [isAdding, setIsAdding] = useState(false);
+  const [newRoom, setNewRoom] = useState({
+    tipe: "",
+    harga: "",
+    fasilitas: "",
+    deskripsi: "",
+    status: "Tersedia",
+    image: "",
+    nomorKamar: "",
+  });
+
+  const handleStatusChange = (id, newStatus) => {
+    setRooms(rooms.map(room =>
+      room.id === id
+        ? {
+            ...room,
+            status: newStatus,
+            tamu: newStatus === "Tersedia" ? null : room.tamu,
+            checkinDate: newStatus === "Tersedia" ? null : room.checkinDate,
+            checkoutDate: newStatus === "Tersedia" ? null : room.checkoutDate,
+          }
+        : room
+    ));
+  };
+
+  const handleEdit = (room) => {
+    setEditingId(room.id);
+    setFormData({
+      ...room,
+      checkinDate: room.checkinDate || "",
+      checkoutDate: room.checkoutDate || "",
+      tamu: room.tamu || "",
+    });
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (editingId) {
+      setFormData({ ...formData, [name]: value });
+    } else {
+      setNewRoom({ ...newRoom, [name]: value });
+    }
+  };
+
+  const handleSave = () => {
+    setRooms(rooms.map(room =>
+      room.id === editingId
+        ? {
+            ...formData,
+            tamu: formData.status === "Terisi" ? formData.tamu : null,
+            checkinDate: formData.status === "Terisi" ? formData.checkinDate : null,
+            checkoutDate: formData.status === "Terisi" ? formData.checkoutDate : null,
+          }
+        : room
+    ));
+    setEditingId(null);
+    setFormData({});
+  };
+
+  const handleAddRoom = () => {
+    const fasilitasArray = newRoom.fasilitas.split(",").map(f => f.trim());
+    const newId = rooms.length > 0 ? Math.max(...rooms.map(r => r.id)) + 1 : 1;
+    const roomToAdd = {
+      ...newRoom,
+      id: newId,
+      harga: parseInt(newRoom.harga),
+      fasilitas: fasilitasArray,
+      tamu: null,
+      checkinDate: null,
+      checkoutDate: null,
+    };
+    setRooms([...rooms, roomToAdd]);
+    setNewRoom({
+      tipe: "",
+      harga: "",
+      fasilitas: "",
+      deskripsi: "",
+      status: "Tersedia",
+      image: "",
+      nomorKamar: "",
+    });
+    setIsAdding(false);
+  };
+
+  const filteredRooms = filterStatus === "Semua" ? rooms : rooms.filter(room => room.status === filterStatus);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Tersedia":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "Terisi":
+        return "bg-red-100 text-red-800 border-red-200";
+      case "Maintenance":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "Tersedia":
+        return "✅ Tersedia";
+      case "Terisi":
+        return "🔴 Terisi";
+      case "Maintenance":
+        return "🔧 Maintenance";
+      default:
+        return status;
+    }
+  };
+
+  const availableCount = rooms.filter(room => room.status === "Tersedia").length;
+  const occupiedCount = rooms.filter(room => room.status === "Terisi").length;
+  const maintenanceCount = rooms.filter(room => room.status === "Maintenance").length;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 p-6">
+    <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-orange-600 mb-4">
-            Daftar Kamar Tersedia
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Pilih kamar yang sesuai dengan kebutuhan Anda
-          </p>
-        </div>
+        <h1 className="text-4xl font-bold text-blue-600 mb-8 text-center">
+          Manajemen Ketersediaan Kamar
+        </h1>
 
         {/* Statistik */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Kamar</p>
-                <p className="text-2xl font-bold text-gray-800">{availableRooms.length}</p>
-              </div>
-              <div className="bg-orange-100 p-3 rounded-full">
-                <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 className="text-lg font-semibold text-gray-700">Total Kamar</h3>
+            <p className="text-3xl font-bold text-blue-600">{rooms.length}</p>
           </div>
-
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-green-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Kamar Tersedia</p>
-                <p className="text-2xl font-bold text-green-600">
-                  {availableRooms.filter(room => room.status === "Tersedia").length}
-                </p>
-              </div>
-              <div className="bg-green-100 p-3 rounded-full">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-            </div>
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 className="text-lg font-semibold text-gray-700">Tersedia</h3>
+            <p className="text-3xl font-bold text-green-600">{availableCount}</p>
           </div>
-
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-blue-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Harga Mulai</p>
-                <p className="text-2xl font-bold text-blue-600">
-                  Rp {Math.min(...availableRooms.map(r => r.harga)).toLocaleString("id-ID")}
-                </p>
-              </div>
-              <div className="bg-blue-100 p-3 rounded-full">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                </svg>
-              </div>
-            </div>
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 className="text-lg font-semibold text-gray-700">Terisi</h3>
+            <p className="text-3xl font-bold text-red-600">{occupiedCount}</p>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 className="text-lg font-semibold text-gray-700">Maintenance</h3>
+            <p className="text-3xl font-bold text-yellow-600">{maintenanceCount}</p>
           </div>
         </div>
 
-        {/* Kartu Kamar */}
+        {/* Tombol Filter & Tambah */}
+        <div className="mb-8 flex flex-wrap gap-4 justify-between items-center">
+          <div className="flex gap-2">
+            {["Semua", "Tersedia", "Terisi", "Maintenance"].map((status) => (
+              <button
+                key={status}
+                onClick={() => setFilterStatus(status)}
+                className={`px-4 py-2 rounded-lg font-medium ${
+                  filterStatus === status
+                    ? "bg-blue-600 text-white"
+                    : "bg-white border text-gray-700 hover:bg-blue-100"
+                }`}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => setIsAdding(true)}
+            className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
+          >
+            + Tambah Kamar
+          </button>
+        </div>
+
+        {/* Form Tambah */}
+        {isAdding && (
+          <div className="bg-white border p-6 rounded-lg mb-8 shadow-sm">
+            <h2 className="text-xl font-bold mb-4">Tambah Kamar Baru</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input name="tipe" placeholder="Tipe Kamar" onChange={handleChange} value={newRoom.tipe} className="border p-2 rounded" />
+              <input name="harga" placeholder="Harga" type="number" onChange={handleChange} value={newRoom.harga} className="border p-2 rounded" />
+              <input name="nomorKamar" placeholder="Nomor Kamar" onChange={handleChange} value={newRoom.nomorKamar} className="border p-2 rounded" />
+              <input name="fasilitas" placeholder="Fasilitas (pisahkan dengan koma)" onChange={handleChange} value={newRoom.fasilitas} className="border p-2 rounded" />
+              <input name="image" placeholder="Link Gambar" onChange={handleChange} value={newRoom.image} className="border p-2 rounded col-span-2" />
+              <textarea name="deskripsi" placeholder="Deskripsi" onChange={handleChange} value={newRoom.deskripsi} className="border p-2 rounded col-span-2" />
+            </div>
+            <div className="mt-4 flex gap-3">
+              <button onClick={handleAddRoom} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Simpan
+              </button>
+              <button onClick={() => setIsAdding(false)} className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                Batal
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Daftar Kamar */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {availableRooms.map((room) => (
-            <Link
-              to={`/admin/AvailableRoomsAdmin/${room.id}`}
-              key={room.id}
-              className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 border border-gray-100"
-            >
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={room.image}
-                  alt={room.tipe}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
-                <div className="absolute top-4 right-4">
-                  <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    {room.status}
-                  </span>
-                </div>
-                <div className="absolute bottom-4 left-4 text-white">
-                  <h2 className="text-2xl font-bold">{room.tipe}</h2>
-                </div>
-              </div>
-
-              <div className="p-6">
-                <p className="text-gray-600 mb-4 line-clamp-2">{room.deskripsi}</p>
-
-                <div className="mb-4">
-                  <p className="text-2xl font-bold text-orange-600">
-                    Rp {room.harga.toLocaleString("id-ID")}
-                    <span className="text-sm font-normal text-gray-500">/ malam</span>
-                  </p>
-                </div>
-
-                <div className="mb-4">
-                  <p className="text-sm font-semibold text-gray-700 mb-2">Fasilitas:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {room.fasilitas.slice(0, 3).map((item, i) => (
-                      <span key={i} className="bg-orange-50 text-orange-700 px-2 py-1 rounded-lg text-xs">
-                        {item}
-                      </span>
-                    ))}
-                    {room.fasilitas.length > 3 && (
-                      <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-lg text-xs">
-                        +{room.fasilitas.length - 3} lainnya
-                      </span>
-                    )}
+          {filteredRooms.map((room) => (
+            <div key={room.id} className="bg-white border rounded-xl shadow-sm">
+              {editingId === room.id ? (
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold mb-4">Edit Kamar {room.nomorKamar}</h3>
+                  <select name="status" value={formData.status} onChange={handleChange} className="w-full border p-3 rounded-lg mb-3">
+                    <option value="Tersedia">Tersedia</option>
+                    <option value="Terisi">Terisi</option>
+                    <option value="Maintenance">Maintenance</option>
+                  </select>
+                  {formData.status === "Terisi" && (
+                    <>
+                      <input name="tamu" value={formData.tamu} onChange={handleChange} placeholder="Nama Tamu" className="w-full border p-3 rounded-lg mb-3" />
+                      <input name="checkinDate" type="date" value={formData.checkinDate} onChange={handleChange} className="w-full border p-3 rounded-lg mb-3" />
+                      <input name="checkoutDate" type="date" value={formData.checkoutDate} onChange={handleChange} className="w-full border p-3 rounded-lg mb-3" />
+                    </>
+                  )}
+                  <div className="flex gap-3">
+                    <button onClick={handleSave} className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 flex-1">
+                      Simpan
+                    </button>
+                    <button onClick={() => setEditingId(null)} className="bg-gray-400 text-white py-2 px-4 rounded hover:bg-gray-500 flex-1">
+                      Batal
+                    </button>
                   </div>
                 </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <span className="text-orange-600 font-semibold group-hover:text-orange-700 transition-colors">
-                    Lihat Detail
-                  </span>
-                  <svg className="w-5 h-5 text-orange-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </div>
-            </Link>
+              ) : (
+                <>
+                  <img src={room.image} alt={room.tipe} className="w-full h-48 object-cover rounded-t-xl" />
+                  <div className="p-6">
+                    <h2 className="text-lg font-bold">{room.tipe} - {room.nomorKamar}</h2>
+                    <p className="text-sm text-gray-600 mb-2">{room.deskripsi}</p>
+                    <span className={`inline-block text-sm font-semibold px-3 py-1 rounded-full border ${getStatusColor(room.status)}`}>
+                      {getStatusBadge(room.status)}
+                    </span>
+                    <div className="mt-4 flex flex-col gap-2">
+                      <button onClick={() => handleEdit(room)} className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+                        Edit Status
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           ))}
-        </div>
-
-        {/* Tombol Tambah */}
-        <div className="text-center mt-12">
-          <button className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-xl font-semibold transition-colors duration-300 shadow-lg">
-            + Tambah Kamar Baru
-          </button>
         </div>
       </div>
     </div>
   );
 };
 
-export default AvailableRoomsAdmin;
+export default RoomAvailabilityAdmin;
