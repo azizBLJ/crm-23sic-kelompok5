@@ -11,7 +11,6 @@ import AvailableRoomsAdmin from './pages/Admin/Rooms/AvailableRoomsAdmin';
 import MembershipFormAdmin from './pages/Admin/Membership/MembershipForm';
 import AdminBookingPageAdmin from './pages/Admin/Booking/AdminBookingPage';
 import RiwayatTransaksiAdmin from './pages/Admin/Transaksi/RiwayatTransaksi';
-import SistemMembershipAdmin from './pages/Admin/Membership/SistemMembership';
 import PetaHotelFasilitasAdmin from './pages/Admin/Fasilitas/PetaHotelFasilitas';
 
 // User Pages
@@ -27,7 +26,9 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function App() {
   return (
+    <>
     <Routes>
+     
       {/* Public Routes */}
       <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
@@ -46,7 +47,6 @@ function App() {
         <Route index element={<DashboardAdmin />} />
         <Route path="Pelanggan" element={<PelangganAdmin />} />
         <Route path="AdminBookingPage" element={<AdminBookingPageAdmin />} />
-        <Route path="SistemMembership" element={<SistemMembershipAdmin />} />
         <Route path="FAQ" element={<FAQAdmin />} />
         <Route path="riwayatTransaksi" element={<RiwayatTransaksiAdmin />} />
         <Route path="PetaHotelFasilitas" element={<PetaHotelFasilitasAdmin />} />
@@ -65,7 +65,8 @@ function App() {
         }
       />
     </Routes>
-  );
+    </>
+  )
 }
 
 export default App;
