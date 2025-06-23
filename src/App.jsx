@@ -1,24 +1,18 @@
 import { Routes, Route } from "react-router-dom";
 import './App.css'
-import MainLayout from './components/MainLayout'
-import Dashboard from './pages/Dashboard'
-import ProductManagement from './pages/Produk'
-import SistemMembership from './pages/SistemMembership'
-import FAQ from './pages/FAQ'
-import Membership from './pages/Membership'
-import MembershipForm from './pages/MembershipForm'
+import MainLayout from './components/Admin/MainLayout'
+import Dashboard from './pages/Admin/Dashboard'
+import FAQ from './pages/Admin/FAQ/FAQ'
+import Membership from './pages/Admin/Membership/Membership'
 function App() {
   return (
     <>
     <Routes>
       <Route  element={<MainLayout />}>
         <Route path="/" element={<Dashboard />}/>
-        <Route path="/produk" element={<ProductManagement />}/>
-        <Route path="SistemMembership" element={<SistemMembership />} />
          <Route path="FAQ" element={<FAQ />} />
-         <Route path="/membership" element={<Membership />}>
-          <Route path="add" element={<MembershipForm />} />
-          </Route>
+         <Route path="/membership" element={<Membership />} />
+    
 
       </Route>
     </Routes>
