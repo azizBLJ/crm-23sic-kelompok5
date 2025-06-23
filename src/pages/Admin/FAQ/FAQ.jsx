@@ -11,7 +11,7 @@ const FAQ = () => {
     },
     {
       id: 2,
-      question: "Apakah tersedia layanan antar-jemput bandara?",
+      question: "Apakah tersedia layanan antar - jemput bandara?",
       answer: "Ya, kami menyediakan layanan antar-jemput bandara dengan biaya tambahan. Silakan hubungi kami sebelum kedatangan.",
       createdAt: new Date("2025-06-01").toISOString(),
     },
