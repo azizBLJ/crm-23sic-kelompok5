@@ -17,7 +17,7 @@ import SistemMembershipAdmin from './pages/Admin/Membership/SistemMembership';
 import PetaHotelFasilitasAdmin from './pages/Admin/Fasilitas/PetaHotelFasilitas';
 
 // User Pages
-// import DashboardUser from './pages/User/DashboardUser'; // (aktifkan jika ada)
+import DashboardUser from './pages/User/Dashboard'; // (aktifkan jika ada)
 
 // Auth Pages
 import Login from './pages/Login';
@@ -60,14 +60,14 @@ function App() {
       </Route>
 
       {/* User Route - Uncomment if user dashboard exists */}
-      {/* <Route
+      <Route
         path="/user"
         element={
           <ProtectedRoute role="user">
-            <UserDashboard />
+            <DashboardUser />
           </ProtectedRoute>
         }
-      /> */}
+      />
     </Routes>
   );
 }

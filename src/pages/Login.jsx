@@ -23,11 +23,11 @@ export default function Login() {
     }
   };
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user?.role === "admin") navigate("/admin");
-    else if (user?.role === "user") navigate("/user");
-  }, []);
+  // useEffect(() => {
+  //   const user = JSON.parse(localStorage.getItem("user"));
+  //   if (user?.role === "admin") navigate("/admin");
+  //   else if (user?.role === "user") navigate("/user");
+  // }, []);
 
   return (
        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FFE382] via-[#FFC47E] to-[#FFAD84]">
