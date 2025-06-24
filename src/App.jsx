@@ -23,6 +23,7 @@ import Error401 from './pages/Error401';
 import Error404 from './pages/Error404';
 
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import BookingDetailPage from "./pages/User/BookingDetailPage";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
         <Route path="AvailableRoomsAdmin" element={<AvailableRoomsAdmin />} />
         <Route path="membership" element={<MembershipAdmin />} />
         <Route path="membership/add" element={<MembershipFormAdmin />} />
+        
       </Route>
 
       {/* User Route - Uncomment if user dashboard exists */}
@@ -64,6 +66,15 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/user"
+        element={
+          <ProtectedRoute role="user">
+            <BookingDetailPage />
+          </ProtectedRoute>
+        }
+      />
+
     </Routes>
     </>
   )
