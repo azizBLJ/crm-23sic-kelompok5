@@ -23,7 +23,6 @@ import { Link, useLocation } from 'react-router-dom';
 const menuItems = [
   { name: 'Dashboard', icon: <LayoutDashboard />, path: '/admin' },
   { name: 'Booking', icon: <IoIosBed />, path: '/admin/AdminBookingPage' },
-  { name: 'Sistem Membership', icon: <MdOutlineCardMembership />, path: '/admin/SistemMembership' },
   { name: 'Riwayat Transaksi', icon: <FaHistory />, path: '/admin/riwayatTransaksi' },
   { name: 'Peta Hotel & Fasilitas', icon: <MdMap />, path: '/admin/PetaHotelFasilitas' },
   { name: 'FAQ', icon: <FaQuestion />, path: '/admin/FAQ' },
@@ -33,8 +32,7 @@ const menuItems = [
 
 
 const accountItems = [
-  { name: 'Pengaturan Akun (belum bisa)', icon: <Settings />, path: '/admin/akun' },
-  { name: 'Sign Up (belum bisa juga)', icon: <UserPlus />, path: '/register' },
+  { name: 'Pengaturan Akun', icon: <Settings />, path: '/admin/KelolaAkunAdmin' },
 ];
 
 

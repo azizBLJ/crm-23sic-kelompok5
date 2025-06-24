@@ -3,6 +3,7 @@ import './App.css'
 
 // Admin Pages
 import FAQAdmin from './pages/Admin/FAQ/FAQ';
+import KelolaAkunAdmin from "./pages/Admin/Akun/KelolaAkunAdmin";
 import DashboardAdmin from "./pages/Admin/Dashboard";
 import MainLayoutAdmin from "./components/Admin/MainLayout";
 import PelangganAdmin from "./pages/Admin/Pelanggan/Pelanggan";
@@ -14,7 +15,9 @@ import RiwayatTransaksiAdmin from './pages/Admin/Transaksi/RiwayatTransaksi';
 import PetaHotelFasilitasAdmin from './pages/Admin/Fasilitas/PetaHotelFasilitas';
 
 // User Pages
-import DashboardUser from './pages/User/Dashboard'; // (aktifkan jika ada)
+import MainLayoutUser from './components/User/MainLayout';
+import DashboardUser from './pages/User/Dashboard'; 
+import UserBookingPage from "./pages/User/Booking/UserBookingPages";
 
 // Auth Pages
 import Login from './pages/Login';
@@ -46,6 +49,7 @@ function App() {
       >
         <Route index element={<DashboardAdmin />} />
         <Route path="Pelanggan" element={<PelangganAdmin />} />
+        <Route path="KelolaAkunAdmin" element={<KelolaAkunAdmin />} />
         <Route path="AdminBookingPage" element={<AdminBookingPageAdmin />} />
         <Route path="FAQ" element={<FAQAdmin />} />
         <Route path="riwayatTransaksi" element={<RiwayatTransaksiAdmin />} />
@@ -60,10 +64,14 @@ function App() {
         path="/user"
         element={
           <ProtectedRoute role="user">
-            <DashboardUser />
+            <MainLayoutUser />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<DashboardUser />} />
+        <Route path="dasboard" element={<DashboardUser />} />
+        <Route path="booking" element={<UserBookingPage />} />
+        </Route>
     </Routes>
     </>
   )
