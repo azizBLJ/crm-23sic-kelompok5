@@ -74,8 +74,7 @@ function App() {
         }
       >
         <Route index element={<DashboardUser />} />
-       <Route path="/dashboard" element={<DashboardUser />} />
-
+        <Route path="/dashboard" element={<DashboardUser />} />
         <Route path="booking" element={<UserBookingPage />} />
         </Route>
     </Routes>
