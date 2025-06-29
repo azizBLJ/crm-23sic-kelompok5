@@ -28,6 +28,7 @@ const menuItems = [
   { name: 'FAQ', icon: <FaQuestion />, path: '/admin/FAQ' },
   { name: 'Membership', icon: <MdRememberMe />, path: '/admin/membership' },
   { name: 'Kamar Available', icon: <MdEventAvailable />, path: '/admin/AvailableRoomsAdmin' },
+  { name: 'Sistem Membership', icon: <MdEventAvailable />, path: '/admin/SistemMembership' },
 ];
 
 
