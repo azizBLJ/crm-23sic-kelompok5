@@ -36,11 +36,10 @@ function App() {
     <Routes>
      
       {/* Public Routes */}
-      <Route path="/Login" element={<Login />} />
+      <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/401" element={<Error401 />} />
       <Route path="*" element={<Error404 />} />
-       <Route path="/" element={<DashboardUser />} />
 
       {/* Admin Protected Routes */}
       <Route
@@ -75,6 +74,8 @@ function App() {
         }
       >
         <Route index element={<DashboardUser />} />
+       <Route path="/dashboard" element={<DashboardUser />} />
+
         <Route path="booking" element={<UserBookingPage />} />
         </Route>
     </Routes>
