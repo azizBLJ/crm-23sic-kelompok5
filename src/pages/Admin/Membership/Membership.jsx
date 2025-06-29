@@ -1,196 +1,157 @@
-import React, { useState } from 'react';
-import { UserPlus, X, Edit2, Trash2 } from 'lucide-react';
+// src/pages/membership/Membership.jsx
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../../Supabase';
+import { Trash2, Edit2, Plus, RefreshCw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Membership = () => {
-  const [showForm, setShowForm] = useState(false);
-  const [members, setMembers] = useState([
-    { id: 1, nama: 'Amelia Putri', email: 'amelia@email.com', telepon: '08123456789', level: 'Gold', status: 'Aktif' },
-    { id: 2, nama: 'Riko Wijaya', email: 'riko@email.com', telepon: '08211223344', level: 'Silver', status: 'Nonaktif' },
-  ]);
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const [form, setForm] = useState({ nama: '', email: '', telepon: '', level: '', status: true });
-  const [editingId, setEditingId] = useState(null);
+  const fetchMembers = async () => {
+    setLoading(true);
+    setError('');
 
-  const toggleForm = () => {
-    setShowForm(!showForm);
-    setForm({ nama: '', email: '', telepon: '', level: '', status: true });
-    setEditingId(null);
-  };
+    const { data, error } = await supabase
+      .from('membership')
+      .select('*')
+      .order('id', { ascending: false });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newData = {
-      ...form,
-      status: form.status ? 'Aktif' : 'Nonaktif',
-    };
-
-    if (editingId) {
-      setMembers(members.map((m) => (m.id === editingId ? { ...newData, id: editingId } : m)));
+    if (error) {
+      setError(`Gagal memuat data: ${error.message}`);
+      setMembers([]);
     } else {
-      setMembers([...members, { ...newData, id: Date.now() }]);
+      setMembers(data || []);
     }
 
-    toggleForm();
+    setLoading(false);
   };
 
-  const handleEdit = (member) => {
-    setForm({
-      nama: member.nama,
-      email: member.email,
-      telepon: member.telepon,
-      level: member.level,
-      status: member.status === 'Aktif',
-    });
-    setEditingId(member.id);
-    setShowForm(true);
-  };
+  useEffect(() => {
+    fetchMembers();
+  }, []);
 
-  const handleDelete = (id) => {
-    setMembers(members.filter((m) => m.id !== id));
-  };
+  const handleDelete = async (id) => {
+    if (!confirm('Yakin ingin menghapus membership ini?')) return;
 
-  const levelBadgeColor = (level) => {
-    switch (level) {
-      case 'Gold': return 'bg-yellow-100 text-yellow-800';
-      case 'Platinum': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-700';
+    const { error } = await supabase.from('membership').delete().eq('id', id);
+    if (error) {
+      alert(`Gagal menghapus: ${error.message}`);
+    } else {
+      alert('Membership berhasil dihapus!');
+      fetchMembers();
     }
   };
+
+  const formatCurrency = (amount) =>
+    new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(amount);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 p-8 font-sans">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-center text-2xl font-bold text-black mb-8 tracking-wide drop-shadow">
-        Membership
-        </h1>
-
-        <div className="mb-6">
+    <div className="p-6 max-w-6xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Daftar Membership</h1>
+          <p className="text-gray-600">Kelola data membership hotel Anda</p>
+        </div>
+        <div className="flex gap-2">
           <button
-            onClick={toggleForm}
-            className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium px-5 py-2.5 rounded-md shadow transition duration-200"
+            onClick={() => navigate('/admin/membership/add')}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
           >
-            {showForm ? <X size={18} /> : <UserPlus size={18} />}
-            {showForm ? 'Batal Tambah Member' : 'Tambah Member'}
+            <Plus size={18} /> Tambah
+          </button>
+          <button
+            onClick={fetchMembers}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            disabled={loading}
+          >
+            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+            Refresh
           </button>
         </div>
+      </div>
 
-        {showForm && (
-          <form
-            onSubmit={handleSubmit}
-            className="bg-white border border-gray-300 shadow-xl rounded-lg p-6 space-y-6"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Nama</label>
-                <input
-                  type="text"
-                  className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFC47E]"
-                  placeholder="Masukkan nama"
-                  value={form.nama}
-                  onChange={(e) => setForm({ ...form, nama: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                <input
-                  type="email"
-                  className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFC47E]"
-                  placeholder="email@domain.com"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Telepon</label>
-                <input
-                  type="text"
-                  className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFC47E]"
-                  placeholder="08xxxxxxxx"
-                  value={form.telepon}
-                  onChange={(e) => setForm({ ...form, telepon: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Level</label>
-                <select
-                  className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFC47E]"
-                  value={form.level}
-                  onChange={(e) => setForm({ ...form, level: e.target.value })}
-                  required
-                >
-                  <option value="">-- Pilih Level --</option>
-                  <option value="Silver">Silver</option>
-                  <option value="Gold">Gold</option>
-                  <option value="Platinum">Platinum</option>
-                </select>
-              </div>
-            </div>
+      {error && (
+        <div className="bg-red-100 text-red-700 px-4 py-3 rounded mb-4">
+          <strong>Error:</strong> {error}
+        </div>
+      )}
 
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={form.status}
-                onChange={(e) => setForm({ ...form, status: e.target.checked })}
-                className="h-4 w-4 text-[#FFC47E] border-[#FFC47E] rounded"
-              />
-              <label className="text-sm text-gray-700">Status Aktif</label>
-            </div>
-
-            <button
-              type="submit"
-              className="mt-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-md font-medium shadow transition duration-200"
-            >
-              {editingId ? 'Update Member' : 'Simpan Member'}
-            </button>
-          </form>
-        )}
-
-        <div className="overflow-x-auto bg-white rounded-lg shadow-md mt-10">
-          <table className="min-w-full divide-y divide-[#FFC47E] text-sm">
-            <thead className="bg-[#FFC47E]/40 text-[gray]">
+      <div className="bg-white rounded-lg shadow overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-orange-100">
+            <tr>
+              <th className="px-4 py-3 text-left">ID</th>
+              <th className="px-4 py-3 text-left">User ID</th>
+              <th className="px-4 py-3 text-left">Level</th>
+              <th className="px-4 py-3 text-right">Total Harga</th>
+              <th className="px-4 py-3 text-center">Total Hari</th>
+              <th className="px-4 py-3 text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
               <tr>
-                <th className="p-4 text-left font-semibold">Nama</th>
-                <th className="p-4 text-left font-semibold">Email</th>
-                <th className="p-4 text-left font-semibold">Telepon</th>
-                <th className="p-4 text-left font-semibold">Level</th>
-                <th className="p-4 text-left font-semibold">Status</th>
-                <th className="p-4 text-left font-semibold">Aksi</th>
+                <td colSpan="6" className="text-center py-8">Memuat data...</td>
               </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-100">
-              {members.map((m) => (
-                <tr key={m.id} className="hover:bg-gray-50">
-                  <td className="p-4 text-gray-800 font-medium">{m.nama}</td>
-                  <td className="p-4 text-gray-700">{m.email}</td>
-                  <td className="p-4 text-gray-700">{m.telepon}</td>
-                  <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${levelBadgeColor(m.level)}`}>
-                      {m.level}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      m.status === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-600'
+            ) : members.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="text-center py-8 text-gray-500">
+                  Belum ada data membership.
+                </td>
+              </tr>
+            ) : (
+              members.map((member) => (
+                <tr key={member.id} className="border-t">
+                  <td className="px-4 py-3 text-gray-600">#{member.id}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-gray-800 break-all">{member.user_id}</td>
+                  <td className="px-4 py-3">
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                      member.level_membership === 'Platinum'
+                        ? 'bg-purple-100 text-purple-800'
+                        : member.level_membership === 'Gold'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-gray-100 text-gray-800'
                     }`}>
-                      {m.status}
+                      {member.level_membership}
                     </span>
                   </td>
-                  <td className="p-4 flex items-center gap-3">
-                    <button onClick={() => handleEdit(m)} className="text-blue-600 hover:text-blue-800 transition">
-                      <Edit2 size={18} />
+                  <td className="px-4 py-3 text-right font-semibold text-green-600">
+                    {formatCurrency(member.total_harga_booking)}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                      {member.total_hari} hari
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-center flex justify-center gap-2">
+                    <button
+                      onClick={() => navigate(`/admin/membership/edit/${member.id}`)}
+                      className="text-blue-600 hover:text-blue-800 p-1"
+                      title="Edit"
+                    >
+                      <Edit2 size={16} />
                     </button>
-                    <button onClick={() => handleDelete(m.id)} className="text-red-600 hover:text-red-800 transition">
-                      <Trash2 size={18} />
+
+                    <button
+                      onClick={() => handleDelete(member.id)}
+                      className="text-red-600 hover:text-red-800 p-1"
+                      title="Hapus"
+                    >
+                      <Trash2 size={16} />
                     </button>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

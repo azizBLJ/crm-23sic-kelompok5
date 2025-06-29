@@ -13,6 +13,8 @@ import MembershipFormAdmin from './pages/Admin/Membership/MembershipForm';
 import AdminBookingPageAdmin from './pages/Admin/Booking/AdminBookingPage';
 import RiwayatTransaksiAdmin from './pages/Admin/Transaksi/RiwayatTransaksi';
 import PetaHotelFasilitasAdmin from './pages/Admin/Fasilitas/PetaHotelFasilitas';
+import SistemMembership from "./pages/Admin/SistemMembership/SistemMembership";
+import SistemMembershipForm from "./pages/Admin/SistemMembership/SistemMembershipForm";
 
 // User Pages
 import MainLayoutUser from './components/User/MainLayout';
@@ -57,6 +59,8 @@ function App() {
         <Route path="AvailableRoomsAdmin" element={<AvailableRoomsAdmin />} />
         <Route path="membership" element={<MembershipAdmin />} />
         <Route path="membership/add" element={<MembershipFormAdmin />} />
+        <Route path="admin/SistemMembership" element={<SistemMembership />} />
+        <Route path="admin/SistemMembership/add" element={<SistemMembershipForm />} />
       </Route>
 
       {/* User Route - Uncomment if user dashboard exists */}
