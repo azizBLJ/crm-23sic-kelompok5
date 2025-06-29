@@ -20,6 +20,7 @@ import SistemMembershipForm from "./pages/Admin/SistemMembership/SistemMembershi
 import MainLayoutUser from './components/User/MainLayout';
 import DashboardUser from './pages/User/Dashboard'; 
 import UserBookingPage from "./pages/User/Booking/UserBookingPages";
+import Klasifikasi from "./pages/User/Klasifikasi/Klasifikasi";
 
 // Auth Pages
 import Login from './pages/Login';
@@ -74,6 +75,7 @@ function App() {
         }
       >
         <Route index element={<DashboardUser />} />
+        <Route path="klasifikasi" element={<Klasifikasi />} />
         <Route path="booking" element={<UserBookingPage />} />
         <Route path="booking/:bookingId" element={<BookingDetailPage />} />
         </Route>
