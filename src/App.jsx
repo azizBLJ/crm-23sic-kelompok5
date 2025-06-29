@@ -28,6 +28,7 @@ import Error401 from './pages/Error401';
 import Error404 from './pages/Error404';
 
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import BookingDetailPage from "./pages/User/BookingDetailPage";
 
 function App() {
   return (
