@@ -7,7 +7,8 @@ export default function PetaHotelFasilitas() {
   const [form, setForm] = useState({
     nama: "",
     lokasi: "",
-    gambar: null,
+    // Change 'gambar' to null initially, as it will be a string (URL)
+    gambar: "",
     status: "Aktif",
   });
   const [showForm, setShowForm] = useState(false);
@@ -15,9 +16,12 @@ export default function PetaHotelFasilitas() {
   const [sortBy, setSortBy] = useState(null);
   const [sortDir, setSortDir] = useState("asc");
   const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(true); // Add loading state
+  const [error, setError] = useState(null); // Add error state
 
   const filteredFasilitas = fasilitas.filter((item) =>
-    item.nama_fasilitas.toLowerCase().includes(query.toLowerCase())
+    item.nama_fasilitas.toLowerCase().includes(query.toLowerCase()) ||
+    item.lokasi_fasilitas.toLowerCase().includes(query.toLowerCase()) // Also allow search by location
   );
 
   useEffect(() => {
@@ -25,67 +29,57 @@ export default function PetaHotelFasilitas() {
   }, []);
 
   const fetchFasilitas = async () => {
+    setLoading(true); // Start loading
     const { data, error } = await supabase
       .from("fasilitas")
       .select("*")
       .order("nama_fasilitas", { ascending: true });
-    if (!error) setFasilitas(data);
-    else console.error(error);
-  };
-
-  const uploadFoto = async (file) => {
-    if (!file) return null;
-    const fileName = `${Date.now()}-${file.name}`;
-    const { data, error } = await supabase.storage
-      .from("fotofasilitas")
-      .upload(`fasilitas/${fileName}`, file);
-
-    if (error) {
-      console.error("Upload error:", error.message);
-      return null;
+    if (!error) {
+      setFasilitas(data);
+      setError(null); // Clear any previous errors
+    } else {
+      console.error("Error fetching facilities:", error);
+      setError("Failed to load facilities. Please try again later."); // Set error message
     }
-
-    const { data: publicUrl } = supabase.storage
-      .from("fotofasilitas")
-      .getPublicUrl(`fasilitas/${fileName}`);
-
-    return publicUrl?.publicUrl;
+    setLoading(false); // End loading
   };
+
+  // Removed uploadFoto as we are using direct links now
 
   const handleInputChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "gambar") {
-      setForm({ ...form, gambar: files[0] });
-    } else {
-      setForm({ ...form, [name]: value });
-    }
+    const { name, value } = e.target; // 'files' is no longer relevant for text input
+    setForm({ ...form, [name]: value });
   };
 
   const handleAdd = async () => {
+    // Check if image link is provided and is a valid URL format (simple check)
     if (!form.nama || !form.lokasi || !form.gambar) {
-      alert("Semua field wajib diisi!");
+      alert("Nama fasilitas, lokasi, dan link gambar wajib diisi!");
+      return;
+    }
+    // Basic URL validation
+    if (!/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(form.gambar)) {
+      alert("Link gambar tidak valid. Pastikan ini adalah URL gambar (contoh: http://example.com/image.jpg).");
       return;
     }
 
-    const photoUrl = await uploadFoto(form.gambar);
-    if (!photoUrl) {
-      alert("Gagal upload gambar.");
-      return;
-    }
+    // Since we are using a direct link, photoUrl is simply form.gambar
+    const photoUrl = form.gambar;
 
     const { error } = await supabase.from("fasilitas").insert({
       nama_fasilitas: form.nama,
       lokasi_fasilitas: form.lokasi,
-      foto_fasilitas: photoUrl,
+      foto_fasilitas: photoUrl, // Use the provided URL directly
       status_fasilitas: form.status,
     });
 
     if (error) {
       console.error("Insert error:", error.message);
-      alert("Gagal menyimpan ke database");
+      alert("Gagal menyimpan ke database: " + error.message);
     } else {
       fetchFasilitas();
-      setForm({ nama: "", lokasi: "", gambar: null, status: "Aktif" });
+      // Reset form to initial state including empty string for gambar
+      setForm({ nama: "", lokasi: "", gambar: "", status: "Aktif" });
       setShowForm(false);
     }
   };
@@ -93,7 +87,12 @@ export default function PetaHotelFasilitas() {
   const handleDelete = async (id) => {
     if (window.confirm("Hapus fasilitas ini?")) {
       const { error } = await supabase.from("fasilitas").delete().eq("id", id);
-      if (!error) fetchFasilitas();
+      if (error) {
+        console.error("Delete error:", error.message);
+        alert("Gagal menghapus fasilitas: " + error.message);
+      } else {
+        fetchFasilitas();
+      }
     }
   };
 
@@ -101,12 +100,44 @@ export default function PetaHotelFasilitas() {
     setForm({
       nama: item.nama_fasilitas,
       lokasi: item.lokasi_fasilitas,
-      gambar: null,
+      // Set the current image URL for editing
+      gambar: item.foto_fasilitas,
       status: item.status_fasilitas,
     });
     setEditId(item.id);
+    setShowForm(true); // Show form when editing
   };
 
+  const handleUpdate = async () => {
+    if (!form.nama || !form.lokasi || !form.gambar) {
+      alert("Nama fasilitas, lokasi, dan link gambar wajib diisi!");
+      return;
+    }
+    if (!/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(form.gambar)) {
+      alert("Link gambar tidak valid. Pastikan ini adalah URL gambar (contoh: http://example.com/image.jpg).");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("fasilitas")
+      .update({
+        nama_fasilitas: form.nama,
+        lokasi_fasilitas: form.lokasi,
+        foto_fasilitas: form.gambar, // Use the updated URL directly
+        status_fasilitas: form.status,
+      })
+      .eq("id", editId);
+
+    if (error) {
+      console.error("Update error:", error.message);
+      alert("Gagal memperbarui fasilitas: " + error.message);
+    } else {
+      fetchFasilitas();
+      setForm({ nama: "", lokasi: "", gambar: "", status: "Aktif" });
+      setEditId(null);
+      setShowForm(false);
+    }
+  };
 
   const handleSort = (key) => {
     const dir = sortBy === key && sortDir === "asc" ? "desc" : "asc";
@@ -126,10 +157,26 @@ export default function PetaHotelFasilitas() {
   ).length;
   const aktif = fasilitas.filter((f) => f.status_fasilitas === "Aktif").length;
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen text-xl text-gray-700">
+        Memuat data fasilitas...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen text-xl text-red-600">
+        {error}
+      </div>
+    );
+  }
+
   return (
     <div className="p-8 font-sans bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold mb-6 text-gray-700">
-        Peta Hotel & Fasilitas
+        Peta Hotel & Fasilitas (Admin)
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
@@ -148,52 +195,76 @@ export default function PetaHotelFasilitas() {
       </div>
 
       <button
-        onClick={() => setShowForm(!showForm)}
+        onClick={() => {
+          setShowForm(!showForm);
+          // Reset form and editId when closing/opening the form
+          setForm({ nama: "", lokasi: "", gambar: "", status: "Aktif" });
+          setEditId(null);
+        }}
         className="mb-4 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
       >
-        {showForm ? "Tutup Form Tambah" : "Tambah Fasilitas"}
+        {showForm ? "Tutup Form" : "Tambah Fasilitas"}
       </button>
 
       {showForm && (
         <div className="mb-6 bg-white p-4 rounded shadow">
-          <h2 className="text-lg font-semibold mb-2">Form Tambah Fasilitas</h2>
+          <h2 className="text-lg font-semibold mb-2">
+            {editId ? "Edit Fasilitas" : "Tambah Fasilitas Baru"}
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <input
               name="nama"
               value={form.nama}
               onChange={handleInputChange}
               placeholder="Nama fasilitas"
-              className="border px-3 py-2 rounded"
+              className="border px-3 py-2 rounded focus:ring-2 focus:ring-blue-300"
             />
             <input
               name="lokasi"
               value={form.lokasi}
               onChange={handleInputChange}
               placeholder="Lokasi"
-              className="border px-3 py-2 rounded"
+              className="border px-3 py-2 rounded focus:ring-2 focus:ring-blue-300"
             />
+            {/* Changed type to 'text' for image link input */}
             <input
               name="gambar"
-              type="file"
+              type="text"
+              value={form.gambar} // Bind value to form.gambar
               onChange={handleInputChange}
-              className="border px-3 py-2 rounded"
+              placeholder="Link Gambar (URL: http://example.com/image.jpg)"
+              className="border px-3 py-2 rounded col-span-1 sm:col-span-2 focus:ring-2 focus:ring-blue-300"
             />
             <select
               name="status"
               value={form.status}
               onChange={handleInputChange}
-              className="border px-3 py-2 rounded"
+              className="border px-3 py-2 rounded focus:ring-2 focus:ring-blue-300"
             >
               <option value="Aktif">Aktif</option>
               <option value="NonAktif">NonAktif</option>
             </select>
           </div>
           <button
-            onClick={handleAdd}
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            onClick={editId ? handleUpdate : handleAdd}
+            className={`px-4 py-2 text-white rounded ${
+              editId ? "bg-blue-600 hover:bg-blue-700" : "bg-green-600 hover:bg-green-700"
+            }`}
           >
-            Simpan Fasilitas
+            {editId ? "Update Fasilitas" : "Simpan Fasilitas"}
           </button>
+          {editId && (
+            <button
+              onClick={() => {
+                setEditId(null);
+                setForm({ nama: "", lokasi: "", gambar: "", status: "Aktif" });
+                setShowForm(false);
+              }}
+              className="ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+            >
+              Batal
+            </button>
+          )}
         </div>
       )}
 
@@ -203,7 +274,7 @@ export default function PetaHotelFasilitas() {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Cari nama fasilitas..."
+          placeholder="Cari nama atau lokasi fasilitas..."
           className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-orange-300"
         />
       </div>
@@ -244,7 +315,7 @@ export default function PetaHotelFasilitas() {
               <tr key={item.id}>
                 <td className="px-6 py-4">
                   <img
-                    src={item.foto_fasilitas}
+                    src={item.foto_fasilitas} // This will now be a URL
                     alt={item.nama_fasilitas}
                     className="w-20 h-14 object-cover rounded"
                   />
