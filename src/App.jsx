@@ -9,12 +9,10 @@ import MainLayoutAdmin from "./components/Admin/MainLayout";
 import PelangganAdmin from "./pages/Admin/Pelanggan/Pelanggan";
 import MembershipAdmin from './pages/Admin/Membership/Membership';
 import AvailableRoomsAdmin from './pages/Admin/Rooms/AvailableRoomsAdmin';
-import MembershipFormAdmin from './pages/Admin/Membership/MembershipForm';
 import AdminBookingPageAdmin from './pages/Admin/Booking/AdminBookingPage';
 import RiwayatTransaksiAdmin from './pages/Admin/Transaksi/RiwayatTransaksi';
 import PetaHotelFasilitasAdmin from './pages/Admin/Fasilitas/PetaHotelFasilitas';
 import SistemMembership from "./pages/Admin/SistemMembership/SistemMembership";
-import SistemMembershipForm from "./pages/Admin/SistemMembership/SistemMembershipForm";
 
 // User Pages
 import MainLayoutUser from './components/User/MainLayout';
@@ -32,6 +30,9 @@ import Error404 from './pages/Error404';
 
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import BookingDetailPage from "./pages/User/BookingDetailPage";
+import FAQ from "./pages/User/FAQ/FAQ";
+import About from "./pages/User/About/About";
+import Contact from "./pages/User/Contact/Contact";
 
 function App() {
   return (
@@ -62,9 +63,7 @@ function App() {
         <Route path="PetaHotelFasilitas" element={<PetaHotelFasilitasAdmin />} />
         <Route path="AvailableRoomsAdmin" element={<AvailableRoomsAdmin />} />
         <Route path="membership" element={<MembershipAdmin />} />
-        <Route path="membership/add" element={<MembershipFormAdmin />} />
-        <Route path="admin/SistemMembership" element={<SistemMembership />} />
-        <Route path="admin/SistemMembership/add" element={<SistemMembershipForm />} />
+        <Route path="SistemMembership" element={<SistemMembership />} />
       </Route>
 
       {/* User Route - Uncomment if user dashboard exists */}
@@ -82,6 +81,10 @@ function App() {
         <Route path="booking/:bookingId" element={<BookingDetailPage />} />
         <Route path="kamar" element={<UserRoomsPage />} />
         <Route path="fasilitas" element={<PetaHotelFasilitas />} />
+        <Route path="FAQ" element={<FAQ />} />
+        <Route path="About" element={<About />} />
+        <Route path="Contact" element={<Contact />} />
+
         </Route>
     </Routes>
     </>
