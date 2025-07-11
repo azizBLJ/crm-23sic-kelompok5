@@ -1,10 +1,15 @@
-// File: KelolaAkunAdmin.jsx
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../../Supabase";
 
 export default function KelolaAkunAdmin() {
   const [users, setUsers] = useState([]);
-  const [form, setForm] = useState({ name: "", email: "", photo: null, role: "user" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    photo: null,
+    status: "user",
+  });
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
 
@@ -26,42 +31,65 @@ export default function KelolaAkunAdmin() {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
   };
-// console.log("Uploading file:", form.photo);
 
   const uploadPhoto = async (file) => {
     const fileName = `fotoakun/${Date.now()}-${file.name}`;
-    const { data, error } = await supabase.storage.from("fotoakun").upload(fileName, file);
+    const { error } = await supabase.storage
+      .from("fotoakun")
+      .upload(fileName, file);
     if (error) throw error;
-    const { data: publicUrlData } = supabase.storage.from("fotoakun").getPublicUrl(fileName);
+    const { data: publicUrlData } = supabase.storage
+      .from("fotoakun")
+      .getPublicUrl(fileName);
     return publicUrlData.publicUrl;
   };
 
   const handleSubmit = async () => {
-    if (!form.name || !form.email || !form.photo) {
-      alert("Semua field wajib diisi.");
+    if (!form.name || !form.email || (!editId && !form.password)) {
+      alert("Nama, email, dan password wajib diisi.");
       return;
     }
+
     try {
-      const photoUrl = await uploadPhoto(form.photo);
+      let photoUrl = null;
+
+      if (form.photo) {
+        photoUrl = await uploadPhoto(form.photo);
+      }
+
       if (editId) {
-        const { error } = await supabase.from("users").update({
+        const updateData = {
           nama: form.name,
           email: form.email,
-          foto: photoUrl,
-          status: form.role,
-        }).eq("id", editId);
+          status: form.status,
+        };
+        if (photoUrl) updateData.foto = photoUrl;
+        if (form.password) updateData.password = form.password;
+
+        const { error } = await supabase
+          .from("users")
+          .update(updateData)
+          .eq("id", editId);
         if (error) throw error;
       } else {
         const { error } = await supabase.from("users").insert({
           nama: form.name,
           email: form.email,
           foto: photoUrl,
-          status: form.role,
+          status: form.status,
+          password: form.password,
         });
         if (error) throw error;
       }
+
       fetchUsers();
-      setForm({ name: "", email: "", photo: null, role: "user" });
+      setForm({
+        name: "",
+        email: "",
+        password: "",
+        photo: null,
+        status: "user",
+      });
       setEditId(null);
       setShowForm(false);
     } catch (error) {
@@ -78,7 +106,13 @@ export default function KelolaAkunAdmin() {
   };
 
   const handleEdit = (user) => {
-    setForm({ name: user.nama, email: user.email, photo: null, role: user.status });
+    setForm({
+      name: user.nama,
+      email: user.email,
+      password: "", // password tidak ditampilkan
+      photo: null,
+      status: user.status,
+    });
     setEditId(user.id);
     setShowForm(true);
   };
@@ -110,7 +144,7 @@ export default function KelolaAkunAdmin() {
         onClick={() => {
           setShowForm(!showForm);
           setEditId(null);
-          setForm({ name: "", email: "", photo: null, role: "user" });
+          setForm({ name: "", email: "", password: "", photo: null, status: "user" });
         }}
         className="mb-4 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
       >
@@ -119,7 +153,9 @@ export default function KelolaAkunAdmin() {
 
       {showForm && (
         <div className="bg-white p-4 rounded shadow mb-6">
-          <h2 className="text-lg font-semibold mb-2">{editId ? "Edit User" : "Tambah User"}</h2>
+          <h2 className="text-lg font-semibold mb-2">
+            {editId ? "Edit User" : "Tambah User"}
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
               name="name"
@@ -135,6 +171,16 @@ export default function KelolaAkunAdmin() {
               onChange={handleChange}
               className="border px-3 py-2 rounded"
             />
+            {!editId && (
+              <input
+                name="password"
+                placeholder="Password"
+                type="password"
+                value={form.password}
+                onChange={handleChange}
+                className="border px-3 py-2 rounded"
+              />
+            )}
             <input
               name="photo"
               type="file"
@@ -143,8 +189,8 @@ export default function KelolaAkunAdmin() {
               className="border px-3 py-2 rounded"
             />
             <select
-              name="role"
-              value={form.role}
+              name="status"
+              value={form.status}
               onChange={handleChange}
               className="border px-3 py-2 rounded"
             >
@@ -168,7 +214,7 @@ export default function KelolaAkunAdmin() {
               <th className="px-6 py-3">Foto</th>
               <th className="px-6 py-3">Nama</th>
               <th className="px-6 py-3">Email</th>
-              <th className="px-6 py-3">Role</th>
+              <th className="px-6 py-3">Status</th>
               <th className="px-6 py-3 text-center">Aksi</th>
             </tr>
           </thead>

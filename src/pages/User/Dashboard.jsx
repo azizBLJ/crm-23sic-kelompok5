@@ -5,66 +5,68 @@ import { supabase } from "../../Supabase";
 const HotelDashboard = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   
-  // const [rooms, setRooms] = useState([]);
-  // const [topFacilities, setTopFacilities] = useState([]);
-
-  //  useEffect(() => {
-  //   const fetchRooms = async () => {
-  //     const { data, error } = await supabase
-  //       .from('kamar')
-  //       .select('*')
-  //       .eq('status_kamar', 'Aktif');
-
-  //     if (data) setRooms(data);
-  //     if (error) console.error('Gagal ambil kamar:', error);
-  //   };
-
-  //   const fetchFacilities = async () => {
-  //     const { data, error } = await supabase
-  //       .from('fasilitas')
-  //       .select('*')
-  //       .eq('status_fasilitas', 'Aktif')
-  //       .order('nama_fasilitas', { ascending: true })
-  //       .limit(5);
-
-  //     if (data) setTopFacilities(data);
-  //     if (error) console.error('Gagal ambil fasilitas:', error);
-  //   };
-
-  //   fetchRooms();
-  //   fetchFacilities();
-  //   }, []);
+  const [rooms, setRooms] = useState([]);
+  const [topFacilities, setTopFacilities] = useState([]);
 
 
-  // Sample data - akan diganti dengan data dari Supabase
-  const heroImages = [
-    { id: 1, url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=600&fit=crop', title: 'Kolam Renang Infinity' },
-    { id: 2, url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1200&h=600&fit=crop', title: 'Restaurant Mewah' },
-    { id: 3, url: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&h=600&fit=crop', title: 'Spa & Wellness Center' }
-  ];
-
-  const rooms = [
-    { id: 1, name: 'Deluxe Room', price: 850000, image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&h=250&fit=crop' },
-    { id: 2, name: 'Executive Suite', price: 1500000, image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&h=250&fit=crop' },
-    { id: 3, name: 'Presidential Suite', price: 2500000, image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=400&h=250&fit=crop' },
-    { id: 4, name: 'Family Room', price: 1200000, image: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=400&h=250&fit=crop' }
-  ];
-
-  const topFacilities = [
-    { id: 1, name: 'Infinity Pool', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop' },
-    { id: 2, name: 'Fine Dining', image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=300&fit=crop' },
-    { id: 3, name: 'Spa & Wellness', image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&h=300&fit=crop' }
-  ];
+const [heroImages, setHeroImages] = useState([]);
 
 
+
+
+   useEffect(() => {
+    const fetchRooms = async () => {
+      const { data, error } = await supabase
+        .from('kamar')
+        .select('*')
+        .eq('status_kamar', 'tersedia');
+
+      if (data) setRooms(data);
+      if (error) console.error('Gagal ambil kamar:', error);
+    };
+
+    const fetchFacilities = async () => {
+      const { data, error } = await supabase
+        .from('fasilitas')
+        .select('*')
+        .eq('status_fasilitas', 'Aktif')
+        .order('nama_fasilitas', { ascending: true })
+        .limit(5);
+
+      if (data) setTopFacilities(data);
+      if (error) console.error('Gagal ambil fasilitas:', error);
+    };
+
+     const fetchHeroImages = async () => {
+      const { data, error } = await supabase
+      .from('fasilitas')
+      .select('*'); // ambil semua, tidak pakai filter status_fasilitas
+      
+      if (data) setHeroImages(data);
+      if (error) console.error('Gagal ambil fasilitas:', error);
+    };
+
+  
+    fetchHeroImages();
+    fetchRooms();
+    fetchFacilities();
+    }, []);
+
+console.log("Rooms:", rooms);
+console.log("gambar:", heroImages);
+console.log("Top Facilities:", topFacilities);
 
   // Auto slide for hero section
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
+ useEffect(() => {
+  if (heroImages.length === 0) return; // Jangan jalankan jika belum ada data
+
+  const timer = setInterval(() => {
+    setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+  }, 5000);
+
+  return () => clearInterval(timer);
+}, [heroImages]); // Tambahkan heroImages ke dependencies
+
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % heroImages.length);
@@ -81,7 +83,7 @@ const HotelDashboard = () => {
       {/* Hero Section */}
       <section className="relative h-[70vh] overflow-hidden">
         <div className="absolute inset-0">
-          {heroImages.map((image, index) => (
+         {heroImages.length > 0 && heroImages.map((image, index) => (
             <div
               key={image.id}
               className={`absolute inset-0 transition-opacity duration-1000 ${
@@ -89,13 +91,14 @@ const HotelDashboard = () => {
               }`}
             >
               <img
-                src={image.url}
-                alt={image.title}
+                src={image.foto_fasilitas}
+                alt={image.nama_fasilitas}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-black/40"></div>
             </div>
           ))}
+
         </div>
 
         {/* Hero Content */}
@@ -157,23 +160,23 @@ const HotelDashboard = () => {
               <div className="relative overflow-hidden">
                 <img
                   src={room.image}
-                  alt={room.name}
+                  alt={room.tipe_kamar}
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
                 {/* Price overlay on hover */}
                 <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
-                  <p className="text-2xl font-bold">Rp {room.price.toLocaleString('id-ID')}</p>
+                  <p className="text-2xl font-bold">Rp {room.harga_kamar.toLocaleString('id-ID')}</p>
                   <p className="text-sm opacity-90">per night</p>
                 </div>
               </div>
               
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">{room.name}</h3>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">{room.tipe_kamar}</h3>
                 <p className="text-gray-600 mb-4">Luxury accommodation with premium amenities</p>
                 <button 
-                  onClick={() => alert(`Booking ${room.name}`)}
+                  onClick={() => alert(`Booking ${room.tipe_kamar}`)}
                   className="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
                 >
                   Book Now
@@ -201,13 +204,13 @@ const HotelDashboard = () => {
               >
                 <div className="relative overflow-hidden h-64">
                   <img
-                    src={facility.image}
-                    alt={facility.name}
+                  src={facility.foto_fasilitas}
+                  alt={facility.nama_fasilitas}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                   <div className="absolute bottom-6 left-6 text-white">
-                    <h3 className="text-2xl font-bold mb-2">{facility.name}</h3>
+                    <h3 className="text-2xl font-bold mb-2">{facility.nama_fasilitas}</h3>
                     <p className="text-sm opacity-90">Premium experience awaits you</p>
                   </div>
                 </div>

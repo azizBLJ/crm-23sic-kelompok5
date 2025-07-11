@@ -37,7 +37,7 @@ function App() {
     <Routes>
      
       {/* Public Routes */}
-      <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/401" element={<Error401 />} />
       <Route path="*" element={<Error404 />} />
@@ -46,7 +46,7 @@ function App() {
       <Route
         path="/admin"
         element={
-          <ProtectedRoute role="admin">
+          <ProtectedRoute status="admin">
             <MainLayoutAdmin />
           </ProtectedRoute>
         }
@@ -67,9 +67,9 @@ function App() {
 
       {/* User Route - Uncomment if user dashboard exists */}
       <Route
-        path="/user"
+        path="/"
         element={
-          <ProtectedRoute role="user">
+          <ProtectedRoute status="user">
             <MainLayoutUser />
           </ProtectedRoute>
         }
