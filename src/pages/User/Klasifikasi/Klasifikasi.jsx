@@ -7,8 +7,14 @@ import {
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
-  Legend
+  Legend,
+  PieChart,
+  Pie,
+  Cell
 } from "recharts";
+
+// Warna Pie Chart
+const COLORS = ["#38a169", "#68d391", "#c6f6d5", "#a0aec0", "#ecc94b"];
 
 function PrediksiKamar() {
   const [form, setForm] = useState({
@@ -32,11 +38,9 @@ function PrediksiKamar() {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://126c-34-125-123-66.ngrok-free.app/predict", {
+      const response = await fetch("https://6c23-34-83-111-21.ngrok-free.app/predict", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           status: form.status,
           jumlah_tamu: parseFloat(form.jumlahTamu),
@@ -86,7 +90,7 @@ function PrediksiKamar() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[ // Input numerik
+            {[ 
               { label: "Jumlah Tamu", name: "jumlahTamu" },
               { label: "Usia", name: "usia" },
               { label: "Jumlah Balita", name: "jumlahBalita" },
@@ -139,7 +143,7 @@ function PrediksiKamar() {
 
             <div className="mt-6 border rounded-lg p-4 bg-green-50 border-green-200">
               <h3 className="text-md font-bold text-center mb-2 text-green-600">
-                📊 Data yang Dimasukkan (Budget dalam ribuan)
+                📊 Data Input Tamu (Budget dalam ribuan)
               </h3>
 
               <ResponsiveContainer width="100%" height={300}>
@@ -156,36 +160,62 @@ function PrediksiKamar() {
               {confidence && (
                 <div className="mt-8">
                   <h3 className="text-md font-bold text-center mb-4 text-green-600">
-                    📈 Confidence Prediksi
+                    🧠 Confidence Prediksi Kelas (Pie Chart)
                   </h3>
 
-                  <ResponsiveContainer width="100%" height={200}>
-                    <BarChart
-                      layout="vertical"
-                      data={Object.entries(confidence).map(([label, value]) => ({
-                        name: label,
-                        value: value
-                      }))}
-                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis type="number" domain={[0, 100]} unit="%" />
-                      <YAxis type="category" dataKey="name" />
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={Object.entries(confidence).map(([label, value]) => ({
+                          name: label,
+                          value: value
+                        }))}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={100}
+                        fill="#38a169"
+                        label={(entry) => `${entry.name}: ${entry.value.toFixed(1)}%`}
+                      >
+                        {Object.entries(confidence).map((_, index) => (
+                          <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
                       <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
-                      <Bar dataKey="value" fill="#38a169" barSize={25} />
-                    </BarChart>
+                    </PieChart>
                   </ResponsiveContainer>
                 </div>
               )}
 
               {accuracy !== null && (
                 <div className="mt-6 text-center">
-                  <p className="text-sm text-gray-600">🎯 Akurasi Model: <span className="font-semibold">{accuracy.toFixed(2)}%</span></p>
+                  <p className="text-sm text-gray-600">
+                    🎯 Akurasi Model: <span className="font-semibold">{accuracy.toFixed(2)}%</span>
+                  </p>
                 </div>
               )}
             </div>
           </>
         )}
+
+        {/* SIGMOID CHART */}
+        <div className="mt-10 bg-white rounded-lg p-6 border border-green-300 shadow-sm">
+          <h2 className="text-center text-xl font-bold text-green-700 mb-4">
+            📉 Visualisasi Metode Logistic Regression (Kurva Sigmoid)
+          </h2>
+          <p className="text-center text-gray-600 mb-4">
+            Logistic Regression menghitung probabilitas berdasarkan kurva sigmoid. 
+            Semakin tinggi nilai input (z), semakin mendekati 1 probabilitasnya.
+          </p>
+          <div className="flex justify-center">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Logistic-curve.svg/512px-Logistic-curve.svg.png"
+              alt="Kurva Sigmoid"
+              className="w-full max-w-xl"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
