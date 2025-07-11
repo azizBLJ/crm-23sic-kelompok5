@@ -21,6 +21,8 @@ import MainLayoutUser from './components/User/MainLayout';
 import DashboardUser from './pages/User/Dashboard'; 
 import UserBookingPage from "./pages/User/Booking/UserBookingPages";
 import Klasifikasi from "./pages/User/Klasifikasi/Klasifikasi";
+import UserRoomsPage from "./pages/User/Kamar/UserRoomsPage";
+import PetaHotelFasilitas from "./pages/User/Fasilitas/CustomerFasilitas";
 
 // Auth Pages
 import Login from './pages/Login';
@@ -78,6 +80,8 @@ function App() {
         <Route path="klasifikasi" element={<Klasifikasi />} />
         <Route path="booking" element={<UserBookingPage />} />
         <Route path="booking/:bookingId" element={<BookingDetailPage />} />
+        <Route path="kamar" element={<UserRoomsPage />} />
+        <Route path="fasilitas" element={<PetaHotelFasilitas />} />
         </Route>
     </Routes>
     </>
