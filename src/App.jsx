@@ -76,14 +76,14 @@ function App() {
         }
       >
         <Route index element={<DashboardUser />} />
-        <Route path="klasifikasi" element={<Klasifikasi />} />
-        <Route path="booking" element={<UserBookingPage />} />
-        <Route path="booking/:bookingId" element={<BookingDetailPage />} />
-        <Route path="kamar" element={<UserRoomsPage />} />
-        <Route path="fasilitas" element={<PetaHotelFasilitas />} />
-        <Route path="FAQ" element={<FAQ />} />
-        <Route path="About" element={<About />} />
-        <Route path="Contact" element={<Contact />} />
+        <Route path="/user/klasifikasi" element={<Klasifikasi />} />
+        <Route path="/user/booking" element={<UserBookingPage />} />
+        <Route path="/user/booking/:bookingId" element={<BookingDetailPage />} />
+        <Route path="/user/kamar" element={<UserRoomsPage />} />
+        <Route path="/user/fasilitas" element={<PetaHotelFasilitas />} />
+        <Route path="/user/FAQ" element={<FAQ />} />
+        <Route path="/user/About" element={<About />} />
+        <Route path="/user/Contact" element={<Contact />} />
 
         </Route>
     </Routes>
