@@ -1,28 +1,34 @@
 // src/components/Header.jsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  User, LogOut, Menu, X
-} from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { User, LogOut, Menu, X } from 'lucide-react';
+
+const navItems = [
+  { name: 'Booking', path: '/booking' },
+  { name: 'FAQ', path: '/faq' },
+  { name: 'Fasilitas', path: '/fasilitas' },
+  { name: 'Kamar', path: '/kamar' },
+  { name: 'About', path: '/about' },
+  { name: 'Contact', path: '/contact' },
+  { name: 'Klasifikasi', path: '/klasifikasi' },
+];
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  // Ambil data user dari localStorage saat pertama kali load
   useEffect(() => {
     const userData = localStorage.getItem("user");
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
+    if (userData) setUser(JSON.parse(userData));
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
-    window.location.reload(); // reload agar state header update
+    window.location.href = "/"; // full reload untuk update state
   };
 
   return (
@@ -43,18 +49,22 @@ const Header = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {['Booking', 'FAQ', 'Fasilitas', 'Kamar', 'About', 'Contact', 'Klasifikasi'].map((item) => (
-                <a
-                  key={item}
-                  href={`/${item.toLowerCase()}`}
-                  className="text-gray-700 hover:text-amber-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-amber-50"
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                    location.pathname === item.path
+                      ? 'bg-amber-200 text-orange-800 font-semibold'
+                      : 'text-gray-700 hover:text-amber-600 hover:bg-amber-50'
+                  }`}
                 >
-                  {item}
-                </a>
+                  {item.name}
+                </Link>
               ))}
             </div>
 
-            {/* User Menu */}
+            {/* User / Login */}
             <div className="flex items-center space-x-4 relative">
               {!user ? (
                 <button
@@ -94,7 +104,7 @@ const Header = () => {
                 </div>
               )}
 
-              {/* Mobile menu button */}
+              {/* Mobile Toggle */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="md:hidden p-2 rounded-md text-gray-700 hover:text-amber-600 hover:bg-amber-50"
@@ -109,15 +119,15 @@ const Header = () => {
         {mobileMenuOpen && (
           <div className="md:hidden bg-white border-t animate-in slide-in-from-top-2">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              {['Booking', 'FAQ', 'Fasilitas', 'Kamar', 'About', 'Contact', 'Klasifikasi'].map((item) => (
-                <a
-                  key={item}
-                  href={`/${item.toLowerCase()}`}
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
                   className="block px-3 py-2 text-gray-700 hover:text-amber-600 hover:bg-amber-50 rounded-md"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {item}
-                </a>
+                  {item.name}
+                </Link>
               ))}
             </div>
           </div>
