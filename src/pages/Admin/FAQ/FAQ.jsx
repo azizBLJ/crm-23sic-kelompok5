@@ -1,38 +1,51 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../../Supabase';
-import { Plus, Trash2, Edit2 } from 'lucide-react';
+import { supabase } from '../../../Supabase'; // Sesuaikan path ini
+import { Plus, Edit2, Trash2, HelpCircle } from 'lucide-react'; // Menggunakan HelpCircle untuk ikon FAQ
 
-// BUTTON COMPONENT
-const Button = ({ children, onClick, className = '', variant = 'default', type = 'button', ...props }) => {
-  let baseClasses = 'px-4 py-2 rounded-lg font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
-  if (variant === 'default') baseClasses += ' bg-blue-600 hover:bg-blue-700 text-white shadow-sm focus:ring-blue-500';
-  else if (variant === 'outline') baseClasses += ' border border-gray-300 text-gray-700 hover:bg-gray-100 focus:ring-gray-300';
-  else if (variant === 'destructive') baseClasses += ' bg-red-600 hover:bg-red-700 text-white shadow-sm focus:ring-red-500';
-  else if (variant === 'secondary') baseClasses += ' bg-gray-200 hover:bg-gray-300 text-gray-800 shadow-sm focus:ring-gray-300';
-  else if (variant === 'primary-orange') baseClasses += ' bg-[#FFAD84] hover:bg-[#f5956a] text-white shadow-sm focus:ring-[#FFAD84]';
-  else if (variant === 'secondary-orange') baseClasses += ' bg-[#FFE382] hover:bg-[#ffdf63] text-gray-800 shadow-sm focus:ring-[#FFE382]';
+// BUTTON COMPONENT (Untuk FAQ.jsx)
+const Button = ({ children, onClick, className = '', variant = 'primary', type = 'button', ...props }) => {
+  let base = 'inline-flex items-center justify-center px-4 py-2 rounded-lg font-semibold shadow transition duration-200';
 
-  return (
-    <button type={type} onClick={onClick} className={`${baseClasses} ${className}`} {...props}>
-      {children}
-    </button>
-  );
+  if (variant === 'primary') {
+    // Tombol utama 'Tambah FAQ Baru' dan 'Tambah/Simpan' di dialog
+    base += ' bg-[#FF9F6B] hover:bg-[#FF8A4F] text-white'; // Warna oranye terang
+  } else if (variant === 'destructive') {
+    // Tombol 'Hapus'
+    base += ' bg-red-600 hover:bg-red-700 text-white';
+  } else if (variant === 'outline') {
+    base += ' border border-gray-300 text-gray-700 hover:bg-gray-100';
+  } else if (variant === 'edit-table') {
+    // Tombol 'Edit' di tabel
+    base += ' bg-[var(--color-sidebar)] hover:bg-yellow-400 text-gray-800';
+  } else if (variant === 'dialog-cancel') {
+    // Tombol 'Batal' di dialog
+    base += ' bg-[var(--color-sidebar)] hover:bg-yellow-400 text-gray-800';
+  }
+  return <button type={type} onClick={onClick} className={`${base} ${className}`} {...props}>{children}</button>;
 };
 
-const Input = ({ type = 'text', placeholder, value, onChange, className = '', ...props }) => (
-  <input type={type} placeholder={placeholder} value={value} onChange={onChange} className={`input ${className}`} {...props} />
+// INPUT COMPONENT
+const Input = ({ value, onChange, className = '', ...props }) => (
+  <input {...props} value={value} onChange={onChange} className={`input ${className}`} />
 );
 
-const Textarea = ({ placeholder, value, onChange, className = '', ...props }) => (
-  <textarea placeholder={placeholder} value={value} onChange={onChange} className={`input min-h-[120px] ${className}`} {...props}></textarea>
+// TEXTAREA COMPONENT
+const Textarea = ({ value, onChange, className = '', ...props }) => (
+  <textarea {...props} value={value} onChange={onChange} className={`input ${className}`} />
 );
 
+// LABEL COMPONENT
+const Label = ({ htmlFor, children }) => (
+  <label htmlFor={htmlFor} className="block mb-2 font-semibold text-gray-700 tracking-wide uppercase text-sm">{children}</label>
+);
+
+// Dialog Component
 const Dialog = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="bg-white rounded-xl shadow-3xl w-full max-w-lg p-7 relative transform scale-95 opacity-0 animate-scale-in">
-        <h2 className="text-2xl font-bold mb-5 text-gray-800 border-b pb-3 border-gray-200">{title}</h2>
+      <div className="bg-white rounded-xl shadow-3xl w-full max-w-lg p-8 relative transform scale-95 opacity-0 animate-scale-in">
+        <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-4 border-gray-200">{title}</h2>
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl transition-colors"
@@ -46,91 +59,67 @@ const Dialog = ({ isOpen, onClose, title, children }) => {
   );
 };
 
-const Table = ({ children }) => (
-  <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-lg bg-white">
-    <table className="min-w-full divide-y divide-gray-200 text-sm">{children}</table>
-  </div>
-);
 
-const TableHeader = ({ children }) => (<thead><tr>{children}</tr></thead>);
-const TableBody = ({ children }) => (<tbody className="divide-y divide-gray-200">{children}</tbody>);
-const TableRow = ({ children }) => (<tr className="hover:bg-orange-50 transition-colors">{children}</tr>);
-const TableHead = ({ children, className = '' }) => (
-  <th className={`px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider ${className}`}>{children}</th>
-);
-const TableCell = ({ children, className = '' }) => (
-  <td className={`px-6 py-4 whitespace-nowrap text-gray-800 ${className}`}>{children}</td>
-);
-const Label = ({ children, htmlFor, className = '' }) => (
-  <label htmlFor={htmlFor} className={`block text-sm font-medium text-gray-700 mb-2 ${className}`}>{children}</label>
-);
-const Card = ({ children, className = '' }) => (
-  <div className={`card transition-shadow hover:shadow-xl duration-300 ${className}`}>{children}</div>
-);
-const CardHeader = ({ children, className = '' }) => (<div className={`mb-5 ${className}`}>{children}</div>);
-const CardTitle = ({ children, className = '' }) => (<h3 className={`text-2xl font-extrabold text-gray-900 ${className}`}>{children}</h3>);
-const CardContent = ({ children, className = '' }) => (<div className={`${className}`}>{children}</div>);
-
-// MAIN COMPONENT
 const FAQ = () => {
   const [faqs, setFaqs] = useState([]);
-  const [isAddEditDialogOpen, setIsAddEditDialogOpen] = useState(false);
-  const [editingFAQ, setEditingFAQ] = useState(null);
-  const [formData, setFormData] = useState({ pertanyaan: '', jawaban: '' });
-  const [error, setError] = useState('');
+  const [form, setForm] = useState({ pertanyaan: '', jawaban: '' });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editId, setEditId] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
-  const [faqToDelete, setFaqToDelete] = useState(null);
+  const [error, setError] = useState('');
 
-  const fetchFAQs = async () => {
+  useEffect(() => {
+    fetchFaqs();
+  }, []);
+
+  const fetchFaqs = async () => {
     setLoading(true);
+    setError('');
     try {
-      const { data, error } = await supabase.from('faq').select('id, pertanyaan, jawaban, tanggal_input').order('id', { ascending: true });
-      if (error) throw error;
-      setFaqs(data);
+      const { data, error: fetchError } = await supabase.from('faq').select('*').order('id', { ascending: true });
+      if (fetchError) throw fetchError;
+      setFaqs(data || []);
     } catch (err) {
-      setError('Gagal memuat data: ' + err.message);
+      setError('Gagal memuat FAQ: ' + err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { fetchFAQs(); }, []);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const openDialog = (data = null) => {
     setError('');
+    if (data) {
+      setEditId(data.id);
+      setForm({ pertanyaan: data.pertanyaan, jawaban: data.jawaban });
+    } else {
+      setEditId(null);
+      setForm({ pertanyaan: '', jawaban: '' });
+    }
+    setIsDialogOpen(true);
   };
 
   const validateForm = () => {
-    if (!formData.pertanyaan.trim()) { setError('Pertanyaan tidak boleh kosong.'); return false; }
-    if (!formData.jawaban.trim()) { setError('Jawaban tidak boleh kosong.'); return false; }
+    if (!form.pertanyaan.trim()) { setError('Pertanyaan tidak boleh kosong.'); return false; }
+    if (!form.jawaban.trim()) { setError('Jawaban tidak boleh kosong.'); return false; }
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    setLoading(true);
-    const faqData = {
-      pertanyaan: formData.pertanyaan.trim(),
-      jawaban: formData.jawaban.trim(),
-    };
 
+    setLoading(true);
+    setError('');
     try {
-      if (editingFAQ) {
-        const { data, error } = await supabase.from('faq').update(faqData).eq('id', editingFAQ.id).select();
+      if (editId) {
+        const { error } = await supabase.from('faq').update(form).eq('id', editId);
         if (error) throw error;
-        setFaqs((prev) => prev.map((faq) => (faq.id === editingFAQ.id ? data[0] : faq)));
       } else {
-        const { data, error } = await supabase.from('faq').insert([faqData]).select();
+        const { error } = await supabase.from('faq').insert([form]);
         if (error) throw error;
-        setFaqs((prev) => [...prev, data[0]]);
       }
-      setIsAddEditDialogOpen(false);
-      setFormData({ pertanyaan: '', jawaban: '' });
-      setEditingFAQ(null);
+      fetchFaqs();
+      setIsDialogOpen(false);
     } catch (err) {
       setError('Gagal menyimpan FAQ: ' + err.message);
     } finally {
@@ -138,26 +127,14 @@ const FAQ = () => {
     }
   };
 
-  const handleEditClick = (faq) => {
-    setEditingFAQ(faq);
-    setFormData({ pertanyaan: faq.pertanyaan, jawaban: faq.jawaban });
-    setIsAddEditDialogOpen(true);
-  };
-
-  const handleDeleteClick = (faq) => {
-    setFaqToDelete(faq);
-    setShowConfirmationDialog(true);
-  };
-
-  const confirmDelete = async () => {
-    if (!faqToDelete) return;
+  const handleDelete = async (id) => {
+    if (!window.confirm("Apakah Anda yakin ingin menghapus FAQ ini?")) return;
     setLoading(true);
+    setError('');
     try {
-      const { error } = await supabase.from('faq').delete().eq('id', faqToDelete.id);
+      const { error } = await supabase.from('faq').delete().eq('id', id);
       if (error) throw error;
-      setFaqs((prev) => prev.filter((faq) => faq.id !== faqToDelete.id));
-      setShowConfirmationDialog(false);
-      setFaqToDelete(null);
+      fetchFaqs();
     } catch (err) {
       setError('Gagal menghapus FAQ: ' + err.message);
     } finally {
@@ -166,9 +143,15 @@ const FAQ = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fef9f5] p-6 font-sans antialiased">
+    <div className="min-h-screen p-6 bg-[#fef9f5] font-sans antialiased">
+      {/* Defined CSS variables for consistency, ideally in a global CSS file */}
       <style>
         {`
+          :root {
+            --color-navbar: #FF9F6B; /* Oranye terang */
+            --color-sidebar: #FDDD88; /* Kuning */
+            --color-warning: #FEF3C7; /* Merah muda untuk warning */
+          }
           @keyframes fade-in {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -182,93 +165,99 @@ const FAQ = () => {
         `}
       </style>
 
-      <div className="max-w-5xl mx-auto">
-        <Card className="mb-8 p-6 bg-white shadow-lg rounded-xl">
-          <CardHeader>
-            <CardTitle>Manajemen FAQ Admin</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-              Kelola pertanyaan dan jawaban yang sering diajukan untuk meningkatkan pengalaman pengguna.
-            </p>
-            <Button onClick={() => { setIsAddEditDialogOpen(true); setEditingFAQ(null); setFormData({ pertanyaan: '', jawaban: '' }); setError(''); }} className="mb-4 flex items-center gap-2 text-base py-2.5 px-5" variant="primary-orange">
-              <Plus size={18} /> Tambah FAQ Baru
-            </Button>
-          </CardContent>
-        </Card>
-
-        {loading && <div className="text-center p-6 text-gray-600 text-lg">Memuat data FAQ...</div>}
-        {error && <div className="text-center p-6 text-red-600 font-semibold text-lg bg-red-50 rounded-lg shadow-sm">{error}</div>}
-        {!loading && faqs.length === 0 && !error && (
-          <div className="text-center p-8 text-gray-500 text-lg bg-white rounded-xl shadow-lg border border-gray-200">
-            Belum ada FAQ yang tersedia.
-          </div>
-        )}
-
-        {!loading && faqs.length > 0 && (
-          <Table>
-            <TableHeader>
-              <TableHead>ID</TableHead>
-              <TableHead>Pertanyaan</TableHead>
-              <TableHead>Jawaban</TableHead>
-              <TableHead>Tanggal Input</TableHead>
-              <TableHead className="text-center">Aksi</TableHead>
-            </TableHeader>
-            <TableBody>
-              {faqs.map((faq) => (
-                <TableRow key={faq.id}>
-                  <TableCell className="font-mono text-gray-600">{faq.id}</TableCell>
-                  <TableCell className="max-w-xs font-medium text-gray-900">{faq.pertanyaan}</TableCell>
-                  <TableCell className="max-w-md text-gray-700 line-clamp-2">{faq.jawaban}</TableCell>
-                  <TableCell className="text-gray-500 text-sm">{faq.tanggal_input ? new Date(faq.tanggal_input).toLocaleDateString('id-ID') : 'N/A'}</TableCell>
-                  <TableCell className="text-center space-x-2">
-                    <Button variant="secondary-orange" onClick={() => handleEditClick(faq)} className="px-4 py-2 text-sm rounded-lg">
-                      <Edit2 size={16} className="inline-block mr-1" /> Edit
-                    </Button>
-                    <Button variant="destructive" onClick={() => handleDeleteClick(faq)} className="px-4 py-2 text-sm rounded-lg">
-                      <Trash2 size={16} className="inline-block mr-1" /> Hapus
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-
-        {/* Form Dialog */}
-        <Dialog isOpen={isAddEditDialogOpen} onClose={() => setIsAddEditDialogOpen(false)} title={editingFAQ ? 'Edit FAQ' : 'Tambah FAQ Baru'}>
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <Label htmlFor="pertanyaan">Pertanyaan</Label>
-              <Input id="pertanyaan" name="pertanyaan" value={formData.pertanyaan} onChange={handleInputChange} placeholder="Masukkan pertanyaan" required />
-            </div>
-            <div>
-              <Label htmlFor="jawaban">Jawaban</Label>
-              <Textarea id="jawaban" name="jawaban" value={formData.jawaban} onChange={handleInputChange} placeholder="Masukkan jawaban" required />
-            </div>
-            {error && <p className="text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-200">{error}</p>}
-            <div className="flex justify-end space-x-3 pt-5">
-              <Button type="button" variant="secondary-orange" onClick={() => setIsAddEditDialogOpen(false)}>Batal</Button>
-              <Button type="submit" disabled={loading} variant="primary-orange">
-                {loading ? 'Menyimpan...' : (editingFAQ ? 'Simpan Perubahan' : 'Tambah FAQ')}
-              </Button>
-            </div>
-          </form>
-        </Dialog>
-
-        {/* Delete Confirmation Dialog */}
-        <Dialog isOpen={showConfirmationDialog} onClose={() => setShowConfirmationDialog(false)} title="Konfirmasi Hapus FAQ">
-          <p className="text-gray-700 mb-6 text-lg">
-            Apakah Anda yakin ingin menghapus FAQ ini: <span className="font-bold text-red-600">"{faqToDelete?.pertanyaan}"</span>?
-          </p>
-          <div className="flex justify-end space-x-3 pt-5">
-            <Button variant="secondary-orange" onClick={() => setShowConfirmationDialog(false)}>Batal</Button>
-            <Button variant="destructive" onClick={confirmDelete} disabled={loading}>
-              {loading ? 'Menghapus...' : 'Hapus Sekarang'}
-            </Button>
-          </div>
-        </Dialog>
+      {/* Header Section (Manajemen FAQ Admin) */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-gray-100">
+        <div className="pb-3 mb-2 border-b border-gray-200">
+          <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+            <HelpCircle size={28} className="text-[var(--color-navbar)]" />
+            Manajemen FAQ
+          </h1>
+        </div>
+        <p className="text-gray-600 mb-4 text-base leading-relaxed">
+          Kelola pertanyaan dan jawaban yang sering diajukan untuk meningkatkan pengalaman pengguna.
+        </p>
+        <Button onClick={() => openDialog()} variant="primary" className="py-2 px-4 text-base">
+          <Plus className="mr-2" size={18} />Tambah FAQ Baru
+        </Button>
       </div>
+
+      {loading && (
+        <div className="flex items-center justify-center p-8 bg-white rounded-xl shadow-lg border border-gray-200 mt-8">
+          <svg className="animate-spin h-5 w-5 mr-3 text-gray-600" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span className="text-gray-600 text-lg">Memuat data FAQ...</span>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-[var(--color-warning)] text-red-700 font-semibold p-6 rounded-lg shadow-sm border border-red-200 mt-8 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span className="text-lg">{error}</span>
+        </div>
+      )}
+
+      {!loading && faqs.length === 0 && !error && (
+        <div className="text-center p-10 text-gray-500 text-lg bg-white rounded-xl shadow-lg border border-gray-200 mt-8">
+          Belum ada FAQ yang tersedia.
+        </div>
+      )}
+
+      {!loading && faqs.length > 0 && (
+        <div className="overflow-x-auto rounded-lg border border-gray-100 shadow-md bg-white mt-8">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+                <th className="p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Pertanyaan</th>
+                <th className="p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Jawaban</th>
+                <th className="p-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {faqs.map(faq => (
+                <tr key={faq.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="p-3 font-mono text-gray-600">{faq.id}</td>
+                  <td className="p-3 text-gray-800">{faq.pertanyaan}</td>
+                  <td className="p-3 text-gray-800">{faq.jawaban}</td>
+                  <td className="p-3 text-center space-x-2 flex justify-center items-center">
+                    <Button variant="edit-table" onClick={() => openDialog(faq)} className="px-3 py-1.5 text-sm">
+                      <Edit2 size={16} />
+                      <span className="ml-1">Edit</span>
+                    </Button>
+                    <Button variant="destructive" onClick={() => handleDelete(faq.id)} className="px-3 py-1.5 text-sm">
+                      <Trash2 size={16} />
+                      <span className="ml-1">Hapus</span>
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Dialog for Add/Edit FAQ */}
+      <Dialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} title={`${editId ? 'Edit' : 'Tambah'} FAQ Baru`}>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <Label htmlFor="pertanyaan">Pertanyaan</Label>
+            <Input name="pertanyaan" id="pertanyaan" value={form.pertanyaan} onChange={e => setForm({ ...form, pertanyaan: e.target.value })} placeholder="Masukkan pertanyaan" />
+          </div>
+          <div>
+            <Label htmlFor="jawaban">Jawaban</Label>
+            <Textarea name="jawaban" id="jawaban" value={form.jawaban} onChange={e => setForm({ ...form, jawaban: e.target.value })} placeholder="Masukkan jawaban" rows="4" />
+          </div>
+          {error && <p className="text-red-600 text-sm bg-[var(--color-warning)] p-4 rounded-lg border border-red-200 mt-4">{error}</p>}
+          <div className="flex justify-end space-x-3 pt-4">
+            <Button variant="dialog-cancel" type="button" onClick={() => setIsDialogOpen(false)}>Batal</Button>
+            <Button type="submit" variant="primary">{editId ? 'Simpan FAQ' : 'Tambah FAQ'}</Button>
+          </div>
+        </form>
+      </Dialog>
     </div>
   );
 };
