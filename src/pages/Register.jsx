@@ -76,7 +76,7 @@ export default function Register() {
       console.error(insertError);
     } else {
       alert('Registrasi berhasil! Silakan login.');
-      navigate('/');
+      navigate('/login');
     }
   };
 
@@ -177,7 +177,7 @@ export default function Register() {
           Sudah punya akun?{' '}
           <span
             className="text-orange-600 cursor-pointer hover:underline"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/login')}
           >
             Login di sini
           </span>
