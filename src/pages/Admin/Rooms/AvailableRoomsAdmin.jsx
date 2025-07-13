@@ -125,7 +125,7 @@ const RoomAvailabilityAdmin = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-blue-600 mb-8 text-center">
+        <h1 className="text-4xl font-bold mb-8 text-center" style={{ color: '#FFAD84' }}>
           Manajemen Ketersediaan Kamar
         </h1>
 
@@ -154,7 +154,7 @@ const RoomAvailabilityAdmin = () => {
                 onClick={() => setFilterStatus(status)}
                 className={`px-4 py-2 rounded-lg font-medium ${
                   filterStatus === status
-                    ? "bg-blue-600 text-white"
+                    ? "bg-[#FFC47E] text-white"
                     : "bg-white border text-gray-700 hover:bg-blue-100"
                 }`}
               >
@@ -167,7 +167,7 @@ const RoomAvailabilityAdmin = () => {
               resetForm();
               setIsAdding(true);
             }}
-            className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
+            class="bg-[#FFC47E] text-white px-6 py-2 rounded-lg hover:bg-[#F0B46E]"
           >
             + Tambah Kamar
           </button>

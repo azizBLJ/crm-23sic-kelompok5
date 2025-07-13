@@ -182,17 +182,26 @@ const UserBookingPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full mx-auto p-6 bg-white rounded-3xl shadow-xl mt-8 font-sans transition-all duration-300 transform hover:scale-105">
-        <h1 className="text-4xl font-extrabold mb-8 text-center text-blue-900 drop-shadow-sm">Reservasi Kamar</h1>
+        <h1 className="text-4xl font-extrabold mb-8 text-center" style={{ color: '#FFAD84' }}>Reservasi Kamar</h1>
 
         {/* Progress Stepper */}
         <div className="flex justify-between items-center mb-8">
           {[1, 2, 3].map((step) => (
             <div key={step} className="flex flex-col items-center">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white transition-all duration-300
-                ${currentStep >= step ? 'bg-blue-600 shadow-md' : 'bg-gray-300'}`}>
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white transition-all duration-300 ${
+                  currentStep >= step ? 'shadow-md' : 'bg-gray-300'
+                }`}
+                style={{ backgroundColor: currentStep >= step ? '#FFC47E' : '' }}
+              >
                 {step}
               </div>
-              <span className={`text-sm mt-2 ${currentStep >= step ? 'text-blue-700 font-semibold' : 'text-gray-500'}`}>
+              <span
+                className={`text-sm mt-2 ${
+                  currentStep >= step ? 'font-semibold' : 'text-gray-500'
+                }`}
+                style={{ color: currentStep >= step ? '#FFC47E' : '' }}
+              >
                 {step === 1 ? 'Pilih' : step === 2 ? 'Detail' : 'Konfirmasi'}
               </span>
             </div>
@@ -202,11 +211,11 @@ const UserBookingPage = () => {
 
         {currentStep === 1 && (
           <div className="space-y-6">
-            <h2 className="font-bold text-2xl text-blue-800 border-b pb-3 mb-4">Pilih Kamar & Tanggal</h2>
+            <h2 className="font-bold text-2xl border-b pb-3 mb-4" style={{ color: '#FFAD84' }}>Pilih Kamar & Tanggal</h2>
             {/* Display selected room or allow selection */}
             {selectedRoom ? (
-              <div className="bg-blue-50 p-4 rounded-xl shadow-md border border-blue-200">
-                <p className="font-extrabold text-xl text-blue-800">{selectedRoom.tipe_kamar}</p>
+              <div className="p-4 rounded-xl shadow-md border" style={{ backgroundColor: '#FFE382', borderColor: '#FFAD84' }}>
+                <p className="font-extrabold text-xl" style={{ color: '#FFAD84' }}>{selectedRoom.tipe_kamar}</p>
                 <p className="text-base mt-1 text-gray-700">Harga: Rp {selectedRoom.harga_kamar.toLocaleString('id-ID')}/malam</p>
                 <p className="text-sm text-gray-600 mt-1">Nomor Kamar: {selectedRoom.no_kamar}</p>
                 <button
@@ -222,15 +231,21 @@ const UserBookingPage = () => {
                   <button
                     key={room.id}
                     onClick={() => setSelectedRoom(room)}
-                    className={`relative block w-full text-left p-5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1
-                      ${selectedRoom?.id === room.id ? 'bg-blue-600 text-white border-blue-700 ring-2 ring-blue-500' : 'bg-white border border-gray-200 hover:bg-blue-50'}`}
+                    className={`relative block w-full text-left p-5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 ${
+                      selectedRoom?.id === room.id ? 'text-white ring-2' : 'bg-white border border-gray-200 hover:bg-yellow-50'
+                    }`}
+                    style={{
+                      backgroundColor: selectedRoom?.id === room.id ? '#FFC47E' : '',
+                      borderColor: selectedRoom?.id === room.id ? '#FFAD84' : '',
+                      ringColor: selectedRoom?.id === room.id ? '#FFAD84' : ''
+                    }}
                   >
                     <p className="font-extrabold text-xl">{room.tipe_kamar}</p>
-                    <p className={`text-base mt-1 ${selectedRoom?.id === room.id ? 'text-blue-100' : 'text-gray-700'}`}>
+                    <p className={`text-base mt-1 ${selectedRoom?.id === room.id ? 'text-yellow-100' : 'text-gray-700'}`}>
                       Harga: Rp {room.harga_kamar.toLocaleString('id-ID')}/malam
                     </p>
                     {selectedRoom?.id === room.id && (
-                      <span className="absolute top-3 right-3 bg-white text-blue-600 text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">Terpilih</span>
+                      <span className="absolute top-3 right-3 bg-white text-orange-600 text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">Terpilih</span>
                     )}
                   </button>
                 )) : (
@@ -247,7 +262,7 @@ const UserBookingPage = () => {
                   id="check-in"
                   value={checkIn}
                   onChange={(e) => setCheckIn(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 transition duration-200 shadow-sm"
                 />
               </div>
               <div>
@@ -257,7 +272,7 @@ const UserBookingPage = () => {
                   id="check-out"
                   value={checkOut}
                   onChange={(e) => setCheckOut(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 transition duration-200 shadow-sm"
                 />
               </div>
               <div className="md:col-span-2"> {/* Make Jumlah Tamu span both columns on larger screens */}
@@ -268,7 +283,7 @@ const UserBookingPage = () => {
                   min="1"
                   value={jumlahTamu}
                   onChange={(e) => setJumlahTamu(parseInt(e.target.value) || 1)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 transition duration-200 shadow-sm"
                 />
               </div>
             </div>
@@ -277,11 +292,11 @@ const UserBookingPage = () => {
 
         {currentStep === 2 && (
           <div className="space-y-6 text-center">
-            <h2 className="font-bold text-2xl text-blue-800 border-b pb-3 mb-4">Detail Tamu</h2>
+            <h2 className="font-bold text-2xl border-b pb-3 mb-4" style={{ color: '#FFAD84' }}>Detail Tamu</h2>
             <p className="text-gray-700 text-lg">
               Saatnya untuk menambahkan detail tamu! Ini adalah langkah opsional yang bisa Anda kembangkan untuk mengumpulkan informasi seperti nama lengkap, kontak, atau preferensi khusus lainnya.
             </p>
-            <p className="text-blue-500 font-semibold italic">
+            <p className="font-semibold italic" style={{ color: '#FFC47E' }}>
               (Untuk saat ini, Anda bisa langsung melanjutkan ke konfirmasi.)
             </p>
           </div>
@@ -289,15 +304,16 @@ const UserBookingPage = () => {
 
         {currentStep === 3 && (
           <div className="space-y-6 text-center">
-            <h2 className="font-bold text-2xl text-blue-800 border-b pb-3 mb-4">Konfirmasi & Pembayaran</h2>
+            <h2 className="font-bold text-2xl border-b pb-3 mb-4" style={{ color: '#FFAD84' }}>Konfirmasi & Pembayaran</h2>
             {selectedRoom && (
-              <div className="bg-blue-50 p-6 rounded-lg shadow-lg border border-blue-200 transform hover:scale-105 transition-transform duration-300">
-                <p className="text-left text-gray-800 mb-2"><strong className="text-blue-700">Kamar Dipilih:</strong> <span className="font-semibold">{selectedRoom.tipe_kamar}</span></p>
-                <p className="text-left text-gray-800 mb-2"><strong className="text-blue-700">Periode Menginap:</strong> {checkIn} - {checkOut}</p>
-                <p className="text-left text-gray-800 mb-2"><strong className="text-blue-700">Durasi:</strong> {calculateNights()} malam</p>
-                <p className="text-left text-gray-800 mb-4"><strong className="text-blue-700">Jumlah Tamu:</strong> {jumlahTamu}</p>
-                <hr className="border-blue-300 mb-4" />
-                <p className="font-extrabold text-2xl text-blue-800 mt-2">Total Harga: Rp {calculateTotal().toLocaleString('id-ID')}</p>
+              <div className="p-6 rounded-lg shadow-lg border transform hover:scale-105 transition-transform duration-300"
+                style={{ backgroundColor: '#FFE382', borderColor: '#FFAD84' }}>
+                <p className="text-left text-gray-800 mb-2"><strong style={{ color: '#FFAD84' }}>Kamar Dipilih:</strong> <span className="font-semibold">{selectedRoom.tipe_kamar}</span></p>
+                <p className="text-left text-gray-800 mb-2"><strong style={{ color: '#FFAD84' }}>Periode Menginap:</strong> {checkIn} - {checkOut}</p>
+                <p className="text-left text-gray-800 mb-2"><strong style={{ color: '#FFAD84' }}>Durasi:</strong> {calculateNights()} malam</p>
+                <p className="text-left text-gray-800 mb-4"><strong style={{ color: '#FFAD84' }}>Jumlah Tamu:</strong> {jumlahTamu}</p>
+                <hr style={{ borderColor: '#FFAD84' }} className="mb-4" />
+                <p className="font-extrabold text-2xl mt-2" style={{ color: '#FFAD84' }}>Total Harga: Rp {calculateTotal().toLocaleString('id-ID')}</p>
                 <p className="text-sm text-gray-600 mt-1">* Termasuk pajak 10%</p>
               </div>
             )}
@@ -319,8 +335,10 @@ const UserBookingPage = () => {
           <button
             onClick={handleBooking}
             disabled={loading}
-            className={`flex-1 px-6 py-3 rounded-full text-white font-bold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5
-              ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-700 hover:bg-blue-800'}`}
+            className={`flex-1 px-6 py-3 rounded-full text-white font-bold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 ${
+              loading ? 'cursor-not-allowed' : ''
+            }`}
+            style={{ backgroundColor: loading ? '#FFAD84' : '#FFAD84', opacity: loading ? 0.7 : 1 }}
           >
             {loading ? 'Memproses...' : currentStep === 1 ? 'Lanjut' : currentStep === 2 ? 'Lanjut Pembayaran' : 'Konfirmasi Booking'}
           </button>
@@ -334,17 +352,33 @@ const UserBookingPage = () => {
 
         {messageBox.show && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
-            <div className={`p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full transform scale-105 animate-pop-in
-              ${messageBox.type === 'error' ? 'bg-red-100 border-red-500 text-red-800' :
+            <div
+              className={`p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full transform scale-105 animate-pop-in border-2 ${
+                messageBox.type === 'error' ? 'bg-red-100 border-red-500 text-red-800' :
                 messageBox.type === 'success' ? 'bg-green-100 border-green-500 text-green-800' :
-                  'bg-blue-100 border-blue-500 text-blue-800'} border-2`}>
+                ''
+              }`}
+              style={{
+                backgroundColor: messageBox.type === 'warning' ? '#FFF78A' : '',
+                borderColor: messageBox.type === 'warning' ? '#FFC47E' : '',
+                color: messageBox.type === 'warning' ? '#A0522D' : '',
+              }}
+            >
               <p className="text-xl font-bold mb-5">{messageBox.message}</p>
               <button
                 onClick={hideMessageBox}
-                className={`px-8 py-3 rounded-full text-white font-bold shadow-lg
-                  ${messageBox.type === 'error' ? 'bg-red-600 hover:bg-red-700' :
-                    messageBox.type === 'success' ? 'bg-green-600 hover:bg-green-700' :
-                      'bg-blue-600 hover:bg-blue-700'} transition-all duration-300 transform hover:scale-105`}
+                className={`px-8 py-3 rounded-full text-white font-bold shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                  messageBox.type === 'error' ? 'bg-red-600 hover:bg-red-700' :
+                  messageBox.type === 'success' ? 'bg-green-600 hover:bg-green-700' :
+                  ''
+                }`}
+                style={{
+                  backgroundColor: messageBox.type === 'warning' ? '#FFC47E' : '',
+                  color: messageBox.type === 'warning' ? '#FFFFFF' : '',
+                  // Note: Tailwind's hover classes are more complex with inline styles.
+                  // For a true hover effect, you'd typically define custom classes in CSS or extend Tailwind config.
+                  // This provides the initial background.
+                }}
               >
                 OK
               </button>
