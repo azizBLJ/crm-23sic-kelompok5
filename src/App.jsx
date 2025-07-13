@@ -29,7 +29,6 @@ import Error401 from './pages/Error401';
 import Error404 from './pages/Error404';
 
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import BookingDetailPage from "./pages/User/BookingDetailPage";
 import FAQ from "./pages/User/FAQ/FAQ";
 import About from "./pages/User/About/About";
 import Contact from "./pages/User/Contact/Contact";
@@ -76,13 +75,11 @@ function App() {
         <Route index element={<DashboardUser />} />
         <Route path="/klasifikasi" element={<Klasifikasi />} />
         <Route path="/booking" element={<UserBookingPage />} />
-        <Route path="/booking/:bookingId" element={<BookingDetailPage />} />
         <Route path="/kamar" element={<UserRoomsPage />} />
         <Route path="/fasilitas" element={<PetaHotelFasilitas />} />
         <Route path="/FAQ" element={<FAQ />} />
         <Route path="/About" element={<About />} />
         <Route path="/Contact" element={<Contact />} />
-
         </Route>
     </Routes>
     </>

@@ -52,9 +52,9 @@ const [heroImages, setHeroImages] = useState([]);
     fetchFacilities();
     }, []);
 
-console.log("Rooms:", rooms);
-console.log("gambar:", heroImages);
-console.log("Top Facilities:", topFacilities);
+// console.log("Rooms:", rooms);
+// console.log("gambar:", heroImages);
+// console.log("Top Facilities:", topFacilities);
 
   // Auto slide for hero section
  useEffect(() => {
