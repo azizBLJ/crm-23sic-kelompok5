@@ -13,8 +13,8 @@ import {
   Cell
 } from "recharts";
 
-// Warna Pie Chart
-const COLORS = ["#38a169", "#68d391", "#c6f6d5", "#a0aec0", "#ecc94b"];
+// Warna Pie Chart dari tema
+const COLORS = ["#FFAD84", "#FFC47E", "#FFE382", "#FFF78A", "#E1B382"];
 
 function PrediksiKamar() {
   const [form, setForm] = useState({
@@ -74,14 +74,14 @@ function PrediksiKamar() {
     { name: "Jumlah Tamu", value: parseFloat(form.jumlahTamu) || 0 },
     { name: "Usia", value: parseFloat(form.usia) || 0 },
     { name: "Jumlah Balita", value: parseFloat(form.jumlahBalita) || 0 },
-    { name: "Budget (Ribuan)", value: (parseFloat(form.budget) || 0) / 1000 },
+    { name: "Budget (Ribu)", value: (parseFloat(form.budget) || 0) / 1000 },
     { name: "Lama Menginap", value: parseFloat(form.lamaMenginap) || 0 }
   ];
 
   return (
-    <div className="min-h-screen bg-green-50 p-6">
-      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-8">
-        <h1 className="text-3xl font-extrabold text-green-800 mb-6 text-center">
+    <div className="min-h-screen bg-[#fef9f5] p-6 font-sans">
+      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-8 border border-gray-200">
+        <h1 className="text-3xl font-extrabold text-[var(--color-navbar)] mb-6 text-center">
           Prediksi Spesifikasi Kamar
         </h1>
         <p className="text-center text-gray-600 mb-6">
@@ -105,7 +105,7 @@ function PrediksiKamar() {
                   value={form[name]}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                  className="input"
                 />
               </div>
             ))}
@@ -117,7 +117,7 @@ function PrediksiKamar() {
                 value={form.status}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                className="input"
               >
                 <option value="">Pilih</option>
                 <option value="keluarga">Keluarga</option>
@@ -129,7 +129,7 @@ function PrediksiKamar() {
 
           <button
             type="submit"
-            className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-200"
+            className="button-primary w-full"
           >
             🔍 Prediksi Sekarang
           </button>
@@ -137,12 +137,12 @@ function PrediksiKamar() {
 
         {hasil && (
           <>
-            <p className="mt-6 text-center text-xl font-semibold text-green-800">
+            <p className="mt-6 text-center text-xl font-semibold text-[var(--color-navbar)]">
               {hasil}
             </p>
 
-            <div className="mt-6 border rounded-lg p-4 bg-green-50 border-green-200">
-              <h3 className="text-md font-bold text-center mb-2 text-green-600">
+            <div className="mt-6 border rounded-lg p-4 bg-[var(--color-warning)]/10 border-[var(--color-warning)]">
+              <h3 className="text-md font-bold text-center mb-2 text-[var(--color-navbar)]">
                 📊 Data Input Tamu (Budget dalam ribuan)
               </h3>
 
@@ -153,13 +153,13 @@ function PrediksiKamar() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="value" fill="#38a169" />
+                  <Bar dataKey="value" fill="var(--color-navbar)" />
                 </BarChart>
               </ResponsiveContainer>
 
               {confidence && (
                 <div className="mt-8">
-                  <h3 className="text-md font-bold text-center mb-4 text-green-600">
+                  <h3 className="text-md font-bold text-center mb-4 text-[var(--color-accent)]">
                     🧠 Confidence Prediksi Kelas (Pie Chart)
                   </h3>
 
@@ -175,7 +175,6 @@ function PrediksiKamar() {
                         cx="50%"
                         cy="50%"
                         outerRadius={100}
-                        fill="#38a169"
                         label={(entry) => `${entry.name}: ${entry.value.toFixed(1)}%`}
                       >
                         {Object.entries(confidence).map((_, index) => (
@@ -199,13 +198,12 @@ function PrediksiKamar() {
           </>
         )}
 
-        {/* SIGMOID CHART */}
-        <div className="mt-10 bg-white rounded-lg p-6 border border-green-300 shadow-sm">
-          <h2 className="text-center text-xl font-bold text-green-700 mb-4">
+        <div className="mt-10 bg-white rounded-lg p-6 border border-[var(--color-accent)] shadow-sm">
+          <h2 className="text-center text-xl font-bold text-[var(--color-navbar)] mb-4">
             📉 Visualisasi Metode Logistic Regression (Kurva Sigmoid)
           </h2>
           <p className="text-center text-gray-600 mb-4">
-            Logistic Regression menghitung probabilitas berdasarkan kurva sigmoid. 
+            Logistic Regression menghitung probabilitas berdasarkan kurva sigmoid.
             Semakin tinggi nilai input (z), semakin mendekati 1 probabilitasnya.
           </p>
           <div className="flex justify-center">
