@@ -1,3 +1,4 @@
+import { MdCardMembership } from "react-icons/md"; 
 import { 
   MdEventAvailable, 
   MdOutlineCardMembership, 
@@ -28,7 +29,7 @@ const menuItems = [
   { name: 'FAQ', icon: <FaQuestion />, path: '/admin/FAQ' },
   { name: 'Membership', icon: <MdRememberMe />, path: '/admin/membership' },
   { name: 'Kamar Available', icon: <MdEventAvailable />, path: '/admin/AvailableRoomsAdmin' },
-  { name: 'Sistem Membership', icon: <MdEventAvailable />, path: '/admin/SistemMembership' },
+  { name: 'Sistem Membership', icon: <MdCardMembership />, path: '/admin/SistemMembership' },
 ];
 
 
